@@ -1,10 +1,17 @@
 package de.bellmannjan.javaguibuilder.Builder;
 
+import de.bellmannjan.javaguibuilder.CreateClass;
+import de.bellmannjan.javaguibuilder.StartScreen;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -54,7 +61,18 @@ public class JButtonAsText {
                 };
                 chooser.setFileFilter(filter);
                 if (chooser.showOpenDialog(chooser) == JFileChooser.APPROVE_OPTION) {
-                    JOptionPane.showMessageDialog(null, "Soon the File will be opened");
+                    File file = chooser.getSelectedFile();
+
+                    SwingUtilities.getWindowAncestor(jButton).dispose();
+                    CreateClass test = new CreateClass();
+                    //JTextArea textArea = (JTextArea)test.getContentPane().getComponent(0);
+                    JTextArea textArea = new JTextArea();
+                    test.add(textArea);
+                    Scanner scanner = new Scanner(file, StandardCharsets.UTF_8);
+                    while (scanner.hasNextLine()) {
+                        textArea.setText(textArea.getText() + "\n" + scanner.nextLine());
+                    }
+
                 }
             }catch (Exception ex) {
                 ex.printStackTrace();
@@ -77,7 +95,7 @@ public class JButtonAsText {
                     }
                 };
                 chooser.setFileFilter(filter);
-                if (chooser.showSaveDialog(chooser) == JFileChooser.APPROVE_OPTION) {
+                if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
                     File file = chooser.getSelectedFile();
                     if (file == null) {
                         return;
@@ -85,7 +103,12 @@ public class JButtonAsText {
                     if (!file.getName().toLowerCase().endsWith(".jfrm")) {
                         file = new File(file.getParentFile(), file.getName() + ".jfrm");
                     }
-                    file.createNewFile();
+                    if (!file.createNewFile()) {
+                        JOptionPane.showMessageDialog(chooser, "Diese Datei existiert schon!");
+                        return;
+                    }
+                    SwingUtilities.getWindowAncestor(jButton).dispose();
+                    new CreateClass();
                 }
             }catch (Exception ex) {
                 ex.printStackTrace();

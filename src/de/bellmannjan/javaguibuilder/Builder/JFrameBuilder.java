@@ -12,7 +12,7 @@ public class JFrameBuilder {
     private LayoutManager manager;
     private boolean resizable = false;
 
-
+    //Initialisieren eine JFrames mit gewählter höhe und breite in Pixeln
     public JFrameBuilder(String title, int frameHeight, int frameWidth) {
         this.frame = new JFrame();
         this.title = title;

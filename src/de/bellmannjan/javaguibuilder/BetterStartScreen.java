@@ -32,7 +32,7 @@ public class BetterStartScreen {
                 .setResizable(false)
                 .setLayout(new GridLayout(4,1))
                 .setBackgroundPicture(imageBackground)
-                .setIcon("../images/icon.png")
+                .setIcon("../images/icon.gif")
                 .build();
 
         //Placeholder
@@ -67,8 +67,8 @@ public class BetterStartScreen {
         pContent.setOpaque(false);
         pContent.setLayout(new BoxLayout(pContent, BoxLayout.PAGE_AXIS));
 
-        JButton bCreateClass = new JButtonAsText(Color.WHITE, Color.GRAY, "../images/Icon material-folder-open.png")
-                .setText("Klasse erstelle")
+        JButton bCreateClass = new JButtonAsText(Color.WHITE, Color.GRAY, "../images/Icon material-desktop-windows.png")
+                .setText("Klasse erstellen")
                 .addCreateFileFuntion()
                 .toText();
         bCreateClass.setFont(new Font("Arial", Font.PLAIN, 20));
