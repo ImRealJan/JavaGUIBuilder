@@ -8,11 +8,14 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 //Angepasstes Skript aus dem Internet
 //Link: https://zetcode.com/javaswing/resizablecomponent/
 //ToDo make Class Abstract with ResizableText, ResizableButton
-public class ResizableComponent extends JComponent {
+//ToDo add keyboard function (entf, arrow)
+public abstract class ResizableComponent extends JComponent {
 
 
     private JComponent jComponent;
@@ -25,7 +28,7 @@ public class ResizableComponent extends JComponent {
             JViewport jViewport = (JViewport)comp.getComponent(0);
             jComponent = (JComponent) jViewport.getView();
         }else this.jComponent = comp;
-        if(this.jComponent instanceof JTextField ||this.jComponent instanceof  JTextArea) {
+        if(this.jComponent instanceof JTextField || this.jComponent instanceof  JTextArea) {
             ((JTextComponent) this.jComponent).setEditable(false);
             this.jComponent.setBackground(Color.white);
         }
@@ -54,6 +57,12 @@ public class ResizableComponent extends JComponent {
         return isClicked;
     }
 
+    public void getAttributes() {
+        //TODO attribute ausgeben
+    }
+
+
+
     private int cursor;
 
     private  Point startpoint;
@@ -61,7 +70,6 @@ public class ResizableComponent extends JComponent {
 
 
     MouseInputListener resizeListener = new MouseInputAdapter() {
-
         @Override
         public void mouseMoved(MouseEvent me) {
             if (isClicked()) {

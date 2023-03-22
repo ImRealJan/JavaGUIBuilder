@@ -1,7 +1,5 @@
 package de.bellmannjan.javaguibuilder.Components;
 
-import de.bellmannjan.javaguibuilder.GUI;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.Color;
