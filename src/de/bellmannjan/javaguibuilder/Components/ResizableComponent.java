@@ -8,8 +8,6 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 //Angepasstes Skript aus dem Internet
 //Link: https://zetcode.com/javaswing/resizablecomponent/
@@ -18,12 +16,16 @@ import java.util.HashMap;
 public abstract class ResizableComponent extends JComponent {
 
 
-    private JComponent jComponent;
+    private String componentName;
+    private String componentType;
+    public JComponent jComponent;
     private boolean isClicked = false;
 
-    public ResizableComponent(JComponent comp, boolean hasScrollPane) {
+    public ResizableComponent(JComponent comp, String name, boolean hasScrollPane) {
         setLayout(new BorderLayout());
         add(comp);
+        setComponentName(name + GUI.getSession().componentCounter);
+        componentType = name;
         if(hasScrollPane) {
             JViewport jViewport = (JViewport)comp.getComponent(0);
             jComponent = (JComponent) jViewport.getView();
@@ -51,17 +53,31 @@ public abstract class ResizableComponent extends JComponent {
 
     public void setClicked(boolean clicked) {
         isClicked = clicked;
+
+        JFrame frame = (JFrame) SwingUtilities.getRoot(getComponent());
+        for (Component component : frame.getComponents()) {
+            component.repaint();
+        }
     }
 
     public boolean isClicked() {
         return isClicked;
     }
 
-    public void getAttributes() {
-        //TODO attribute ausgeben
+    public abstract void getAttributes();
+    public abstract void updateAttributes();
+
+    public String getComponentName() {
+        return componentName;
     }
 
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
 
+    public String getComponentType() {
+        return componentType;
+    }
 
     private int cursor;
 
@@ -93,6 +109,8 @@ public abstract class ResizableComponent extends JComponent {
             startpoint = SwingUtilities.convertPoint(getComponent(), me.getPoint(), getParent());
 
             GUI.getSession().handleComponentClick((ResizableComponent) getComponent());
+            int index = GUI.getSession().getResizableComponents().indexOf(getComponent());
+            GUI.getComponentPanel().getComponentList().setSelectedIndex(index);
 
             JFrame frame = (JFrame) SwingUtilities.getRoot(getComponent());
             for (Component component : frame.getComponents()) {

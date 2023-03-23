@@ -94,33 +94,36 @@ public class GUI extends JFrame {
 
       codeOutputPanel = new CodeOutputPanel();
       JScrollPane outputScrollPanel = new JScrollPane(codeOutputPanel);
+      outputScrollPanel.setMinimumSize(new Dimension(1000,1000));
 
       optionDesktopPane.setBackground(Color.LIGHT_GRAY);
 
       codeSplitPane.setLeftComponent(optionDesktopPane);
       codeSplitPane.setRightComponent(outputScrollPanel);
-      codeSplitPane.setDividerLocation((int)(getWidth()*.10));
+      optionDesktopPane.setMinimumSize(new Dimension(200,300));
 
 
       //Design-Fenster
       //Aufteilen in zwei Fenster
       guiDeskPane = new JDesktopPane();
       guiDeskPane.setBackground(Color.WHITE);
+      guiDeskPane.setMinimumSize(new Dimension(1000,500));
 
       JSplitPane settingsSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
       settingsSplitPane.setBackground(Color.LIGHT_GRAY);
 
-      int xLocation = (int) (getWidth()*.75);
-      designSplitPane.setDividerLocation(xLocation);
+      designSplitPane.setResizeWeight(.95);
+      settingsSplitPane.setMinimumSize(new Dimension(500,500));
 
       designSplitPane.setLeftComponent(guiDeskPane);
       designSplitPane.setRightComponent(settingsSplitPane);
 
       //Settings Panel aufteilen in zwei Panel für Eigenschaften und Component Builder
       componentPanel = new ComponentPanel();
+      componentPanel.setMinimumSize(new Dimension(500,300));
       attributPanel = new AttributPanel();
 
-      settingsSplitPane.setDividerLocation((int)(getHeight()*.3));
+      settingsSplitPane.setResizeWeight(.05);
 
       settingsSplitPane.setTopComponent(attributPanel);
       settingsSplitPane.setBottomComponent(componentPanel);
