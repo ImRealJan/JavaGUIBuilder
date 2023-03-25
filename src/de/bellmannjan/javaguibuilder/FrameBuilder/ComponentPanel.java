@@ -3,21 +3,16 @@ package de.bellmannjan.javaguibuilder.FrameBuilder;
 import de.bellmannjan.javaguibuilder.GUI;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.Objects;
 
 public class ComponentPanel extends JPanel {
+    private final JList<String> componentList;
+    private final DefaultListModel<String> componentListModel;
 
-    private JPanel contentPanel;
-    private JList<String> componentList;
-    private DefaultListModel<String> componentListModel;
-
-    public JPanel getContentPanel() {
-        return contentPanel;
-    }
     public JList<String> getComponentList() {
         return componentList;
     }
@@ -29,13 +24,11 @@ public class ComponentPanel extends JPanel {
     public ComponentPanel() {
         setLayout(new BorderLayout());
 
-        JPanel componentHeaderPanel = new JPanel();
-        componentHeaderPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        JLabel lcomponent = new JLabel("Objekt hinzufügen:");
+        JLabel lcomponent = new JLabel("Objekt hinzufügen:", SwingConstants.CENTER);
+        lcomponent.setBorder(new EmptyBorder(5,0,0,0));
         lcomponent.setFont(new Font("Arial", Font.BOLD, 14));
-        componentHeaderPanel.add(lcomponent);
 
-        contentPanel = new JPanel(new FlowLayout());
+        JPanel contentPanel = new JPanel(new FlowLayout());
         contentPanel.setBorder(BorderFactory.createTitledBorder("Komponenten:"));
 
         JButton buttonAddText = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("../images/componentIcons/jlabel.gif"))));
@@ -52,7 +45,7 @@ public class ComponentPanel extends JPanel {
         contentPanel.add(buttonAddTextField);
         contentPanel.add(buttonAddTextArea);
 
-        for (Component component  : contentPanel.getComponents()) {
+        for (Component component : contentPanel.getComponents()) {
             if(component instanceof JButton button) {
                 button.setMargin(new Insets(0,0,0,0));
                 button.addActionListener(e -> {
@@ -76,7 +69,6 @@ public class ComponentPanel extends JPanel {
             }
         });
         JScrollPane scrollableComponentList = new JScrollPane(componentList);
-        scrollableComponentList.setPreferredSize(scrollableComponentList.getPreferredSize());
 
         JPanel componentButtonsPanel = new JPanel(new GridLayout(3,0));
         JPanel listButtons = new JPanel();
@@ -120,17 +112,15 @@ public class ComponentPanel extends JPanel {
         selectComponentPanel.add(scrollableComponentList, BorderLayout.CENTER);
         selectComponentPanel.add(componentButtonsPanel, BorderLayout.LINE_END);
 
-        add(componentHeaderPanel,BorderLayout.PAGE_START);
+        add(lcomponent,BorderLayout.PAGE_START);
         add(contentPanel, BorderLayout.CENTER);
         add(selectComponentPanel, BorderLayout.PAGE_END);
     }
 
     public void updateList() {
         componentListModel.clear();
-        GUI.getSession().getResizableComponents().forEach(resizableComponent1 -> {
-            GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent1.getName() + " : "
-                    + resizableComponent1.getComponentType().toUpperCase());
-        });
+        GUI.getSession().getResizableComponents().forEach(resizableComponent1 -> GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent1.getName() + " : "
+                + resizableComponent1.getComponentType().toUpperCase()));
         GUI.getComponentPanel().getComponentList().setSelectedIndex(GUI.getSession().getResizableComponents().size()-1);
     }
 }

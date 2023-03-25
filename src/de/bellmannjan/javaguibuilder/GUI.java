@@ -6,8 +6,14 @@ import de.bellmannjan.javaguibuilder.FrameBuilder.ComponentPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.GUIMenu;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Objects;
 
 public class GUI extends JFrame {
@@ -82,18 +88,17 @@ public class GUI extends JFrame {
       //Erstellen von 2 Tabs für Codegenerierung und GUI-Design
       JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
-      JSplitPane designSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-      designSplitPane.setResizeWeight(.95);
+      JPanel designPanel = new JPanel(new BorderLayout());
       JPanel codePanel = new JPanel(new BorderLayout());
 
-      tabbedPane.addTab("Design", designSplitPane);
+      tabbedPane.addTab("Design", designPanel);
       tabbedPane.addTab("Code", codePanel);
       add(tabbedPane, BorderLayout.CENTER);
 
       //Code-Fenster
 
       //Toolbar mit Button zum Ausführen und Generieren von Code
-      JToolBar toolBar = new JToolBar("Optionen:", JToolBar.VERTICAL);
+      JToolBar toolBar = new JToolBar("Optionen:", JToolBar.HORIZONTAL);
       toolBar.addSeparator();
       toolBar.setMargin(new Insets(5,0,0,5));
 
@@ -107,7 +112,7 @@ public class GUI extends JFrame {
 
       toolBar.add(runButton);
       toolBar.add(outputButton);
-      codePanel.add(toolBar, BorderLayout.LINE_START);
+      codePanel.add(toolBar, BorderLayout.PAGE_START);
 
       //JEditorPane indem der Code fürs JFrame ausgegeben wird
       codeOutputPanel = new CodeOutputPanel();
@@ -119,19 +124,26 @@ public class GUI extends JFrame {
       guiDeskPane = new JDesktopPane();
       guiDeskPane.setBackground(Color.WHITE);
 
-      JSplitPane settingsSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-      settingsSplitPane.setBackground(Color.LIGHT_GRAY);
-      settingsSplitPane.setResizeWeight(.05);
+      JToolBar toolBar2 = new JToolBar("Einstellungen:", JToolBar.VERTICAL);
+      toolBar2.addSeparator();
+      toolBar2.setMargin(new Insets(5,0,0,5));
+      toolBar2.setRollover(true);
 
-      designSplitPane.setLeftComponent(guiDeskPane);
-      designSplitPane.setRightComponent(settingsSplitPane);
+      JPanel settingsPanel = new JPanel(new BorderLayout());
+
+      toolBar2.add(settingsPanel);
+
+      designPanel.add(guiDeskPane, BorderLayout.CENTER);
+      designPanel.add(toolBar2, BorderLayout.LINE_END);
 
       //Settings Panel aufteilen in zwei Panel für Attribute und Erstellen/Verwalten der Komponenten
       componentPanel = new ComponentPanel();
+      componentPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
       attributPanel = new AttributPanel();
+      attributPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
 
-      settingsSplitPane.setTopComponent(attributPanel);
-      settingsSplitPane.setBottomComponent(componentPanel);
+      settingsPanel.add(attributPanel, BorderLayout.PAGE_START);
+      settingsPanel.add(componentPanel, BorderLayout.CENTER);
 
       //Footer
 
@@ -139,6 +151,17 @@ public class GUI extends JFrame {
       JLabel copyrightText = new JLabel("\u00A92023 JavaGUIBuilder by Jan Bellmann");
       bottomPanel.add(copyrightText);
       add(bottomPanel, BorderLayout.PAGE_END);
+
+      addWindowListener(new WindowAdapter() {
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+          if(getSession() != null) {
+            JOptionPane.showMessageDialog(null, "MOMENT!");
+            //TODO speicherabfrage
+          }
+        }
+      });
 
       setExtendedState(JFrame.MAXIMIZED_BOTH);
       setVisible(true);

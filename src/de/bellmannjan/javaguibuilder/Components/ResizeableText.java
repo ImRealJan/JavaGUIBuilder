@@ -19,14 +19,14 @@ public class ResizeableText extends ResizeableComponent {
      */
     public void getAttributes() {
 
-        GUI.getAttributPanel().getTableModel().setValueAt("Name", 0, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0, 1);
+        attributTableModel.setValueAt("Name", 0, 0);
+        attributTableModel.setValueAt(getName(), 0, 1);
 
-        GUI.getAttributPanel().getTableModel().setValueAt("Text", 1, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(label.getText(), 1, 1);
+        attributTableModel.setValueAt("Text", 1, 0);
+        attributTableModel.setValueAt(label.getText(), 1, 1);
 
-        GUI.getAttributPanel().getTableModel().setValueAt("Size", 2, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(label.getFont().getSize(), 2, 1);
+        attributTableModel.setValueAt("Size", 2, 0);
+        attributTableModel.setValueAt(label.getFont().getSize(), 2, 1);
     }
 
     /**
@@ -34,16 +34,16 @@ public class ResizeableText extends ResizeableComponent {
      */
     public void updateAttributes() {
 
-        if(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString().equals(""))
-            GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0,1);
+        if(attributTableModel.getValueAt(0,1).toString().equals(""))
+            attributTableModel.setValueAt(getName(), 0,1);
         try {
-            Integer.parseInt(GUI.getAttributPanel().getTableModel().getValueAt(2,1).toString());
+            Integer.parseInt(attributTableModel.getValueAt(2,1).toString());
         } catch (Exception ex) {
-            GUI.getAttributPanel().getTableModel().setValueAt(label.getFont().getSize(), 2,1);
+            attributTableModel.setValueAt(label.getFont().getSize(), 2,1);
         }
 
-        label.setText(GUI.getAttributPanel().getTableModel().getValueAt(1,1).toString());
-        label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(GUI.getAttributPanel().getTableModel().getValueAt(2,1).toString())));
-        setName(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString());
+        label.setText(attributTableModel.getValueAt(1,1).toString());
+        label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(attributTableModel.getValueAt(2,1).toString())));
+        setName(attributTableModel.getValueAt(0,1).toString());
     }
 }

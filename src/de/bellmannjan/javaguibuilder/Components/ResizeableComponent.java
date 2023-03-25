@@ -3,12 +3,11 @@ package de.bellmannjan.javaguibuilder.Components;
 import de.bellmannjan.javaguibuilder.GUI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-
-//TODO Name of Component cant exist more than once
 
 /**
  * Angepasstes Skript aus dem Internet
@@ -18,6 +17,8 @@ public abstract class ResizeableComponent extends JComponent {
 
     private final String componentType;
     protected JComponent resizeableComponent;
+
+    protected DefaultTableModel attributTableModel;
 
     private int cursor;
     private  Point startpoint;
@@ -34,8 +35,21 @@ public abstract class ResizeableComponent extends JComponent {
         componentType = name;
 
         resizeableComponent = comp;
+        attributTableModel = GUI.getAttributPanel().getTableModel();
     }
 
+    /**
+     * @param name Setzt den Namen der Komponente. Dabei wird überprüft ob der Name schon exisitiert.
+     */
+    @Override
+    public void setName(String name) {
+        for (ResizeableComponent resizeableComponent : GUI.getSession().getResizableComponents()) {
+            if (resizeableComponent.getName().equals(name)) {
+                return;
+            }
+        }
+        super.setName(name);
+    }
 
     /**
      * @return Die Komponente

@@ -24,11 +24,11 @@ public class ResizeableTextArea extends ResizeableComponent {
      * Attribute der Komponente werden an Attributeinstellungen übergeben.
      */
     public void getAttributes() {
-        GUI.getAttributPanel().getTableModel().setValueAt("Name", 0, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0, 1);
+        attributTableModel.setValueAt("Name", 0, 0);
+        attributTableModel.setValueAt(getName(), 0, 1);
 
-        GUI.getAttributPanel().getTableModel().setValueAt("Text", 1, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(textArea.getText(), 1, 1);
+        attributTableModel.setValueAt("Text", 1, 0);
+        attributTableModel.setValueAt(textArea.getText(), 1, 1);
     }
 
     /**
@@ -36,12 +36,12 @@ public class ResizeableTextArea extends ResizeableComponent {
      */
     public void updateAttributes() {
 
-        if(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString().equals(""))
-            GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0,1);
+        if(attributTableModel.getValueAt(0,1).toString().equals(""))
+            attributTableModel.setValueAt(getName(), 0,1);
 
-        textArea.setText(GUI.getAttributPanel().getTableModel().getValueAt(1,1).toString());
+        textArea.setText(attributTableModel.getValueAt(1,1).toString());
 
-        setName(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString());
+        setName(attributTableModel.getValueAt(0,1).toString());
 
     }
 }
