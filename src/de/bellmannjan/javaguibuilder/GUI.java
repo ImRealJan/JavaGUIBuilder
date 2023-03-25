@@ -6,8 +6,9 @@ import de.bellmannjan.javaguibuilder.FrameBuilder.ComponentPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.GUIMenu;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class GUI extends JFrame {
 
@@ -34,6 +35,7 @@ public class GUI extends JFrame {
   public static Session getSession() {
     return session;
   }
+
   public static void setSession(Session session) {
     GUI.session = session;
   }
@@ -47,6 +49,23 @@ public class GUI extends JFrame {
     super();
     EventQueue.invokeLater(() -> {
 
+      KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+      manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+        /**
+         * @Description alle Tasteneingaben der Tastatur werden hier abgefangen. Bei Taste "Entf" wird ausgewählte Komponente gelöscht.
+         */
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+          if (e.getID() == KeyEvent.KEY_PRESSED) {
+            if(e.getKeyCode() == 127) {
+              if(getSession().getSelectedComponent() != null)
+                getSession().removeResizableComponent(getSession().getSelectedComponent());
+            }
+          }
+          return false;
+        }
+      });
+
       //Einstellungen an JFrame vornehmen
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       setSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -54,76 +73,62 @@ public class GUI extends JFrame {
       setTitle("Java GUI Builder");
       setLayout(new BorderLayout());
 
-      //Menu
+      //Menüleiste
       GUIMenu guiMenu = new GUIMenu();
       setJMenuBar(guiMenu);
+      requestFocus();
 
       //Content
       //Erstellen von 2 Tabs für Codegenerierung und GUI-Design
       JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
       JSplitPane designSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-      JSplitPane codeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+      designSplitPane.setResizeWeight(.95);
+      JPanel codePanel = new JPanel(new BorderLayout());
 
       tabbedPane.addTab("Design", designSplitPane);
-      tabbedPane.addTab("Code", codeSplitPane);
+      tabbedPane.addTab("Code", codePanel);
       add(tabbedPane, BorderLayout.CENTER);
 
       //Code-Fenster
-      JDesktopPane optionDesktopPane = new JDesktopPane();
-      optionDesktopPane.setLayout(new BorderLayout());
 
-      //Linke Seite
-      JPanel optionHeaderPanel = new JPanel();
-      optionHeaderPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-      JLabel optionLabel = new JLabel("Optionen:");
-      optionLabel.setFont(new Font("Arial", Font.BOLD, 12));
-      optionHeaderPanel.add(optionLabel);
-      optionDesktopPane.add(optionHeaderPanel, BorderLayout.PAGE_START);
+      //Toolbar mit Button zum Ausführen und Generieren von Code
+      JToolBar toolBar = new JToolBar("Optionen:", JToolBar.VERTICAL);
+      toolBar.addSeparator();
+      toolBar.setMargin(new Insets(5,0,0,5));
 
-      JPanel optionContentPanel = new JPanel();
+      JButton runButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/run.gif"))));
+      runButton.setToolTipText("GUI starten");
+      runButton.setMargin(new Insets(0,0,0,0));
 
-      JButton generateCodeButton = new JButton("Code generieren");
-      optionContentPanel.add(generateCodeButton);
-      JButton runCodeButton = new JButton("Debug JFrame");
-      optionContentPanel.add(runCodeButton);
-      optionDesktopPane.add(optionContentPanel, BorderLayout.CENTER);
+      JButton outputButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/generate.gif"))));
+      outputButton.setToolTipText("Code generieren");
+      outputButton.setMargin(new Insets(0,0,0,0));
 
+      toolBar.add(runButton);
+      toolBar.add(outputButton);
+      codePanel.add(toolBar, BorderLayout.LINE_START);
 
-      //Rechte Seite
-
+      //JEditorPane indem der Code fürs JFrame ausgegeben wird
       codeOutputPanel = new CodeOutputPanel();
-      JScrollPane outputScrollPanel = new JScrollPane(codeOutputPanel);
-      outputScrollPanel.setMinimumSize(new Dimension(1000,1000));
-
-      optionDesktopPane.setBackground(Color.LIGHT_GRAY);
-
-      codeSplitPane.setLeftComponent(optionDesktopPane);
-      codeSplitPane.setRightComponent(outputScrollPanel);
-      optionDesktopPane.setMinimumSize(new Dimension(200,300));
-
+      JScrollPane codeScrollPane = new JScrollPane(codeOutputPanel);
+      codePanel.add(codeScrollPane, BorderLayout.CENTER);
 
       //Design-Fenster
-      //Aufteilen in zwei Fenster
+      //Aufteilen in zwei Panel
       guiDeskPane = new JDesktopPane();
       guiDeskPane.setBackground(Color.WHITE);
-      guiDeskPane.setMinimumSize(new Dimension(1000,500));
 
       JSplitPane settingsSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
       settingsSplitPane.setBackground(Color.LIGHT_GRAY);
-
-      designSplitPane.setResizeWeight(.95);
-      settingsSplitPane.setMinimumSize(new Dimension(500,500));
+      settingsSplitPane.setResizeWeight(.05);
 
       designSplitPane.setLeftComponent(guiDeskPane);
       designSplitPane.setRightComponent(settingsSplitPane);
 
-      //Settings Panel aufteilen in zwei Panel für Eigenschaften und Component Builder
+      //Settings Panel aufteilen in zwei Panel für Attribute und Erstellen/Verwalten der Komponenten
       componentPanel = new ComponentPanel();
-      componentPanel.setMinimumSize(new Dimension(500,300));
       attributPanel = new AttributPanel();
-
-      settingsSplitPane.setResizeWeight(.05);
 
       settingsSplitPane.setTopComponent(attributPanel);
       settingsSplitPane.setBottomComponent(componentPanel);
@@ -132,7 +137,6 @@ public class GUI extends JFrame {
 
       JPanel bottomPanel = new JPanel();
       JLabel copyrightText = new JLabel("\u00A92023 JavaGUIBuilder by Jan Bellmann");
-      copyrightText.setAlignmentX(SwingConstants.LEFT);
       bottomPanel.add(copyrightText);
       add(bottomPanel, BorderLayout.PAGE_END);
 
@@ -141,11 +145,6 @@ public class GUI extends JFrame {
     });
   }
   public static void main(String[] args) {
-    /**
-     *     try {
-     *       UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-     *     } catch(Exception ignored){}
-     */
     new GUI();
   }
 }

@@ -1,115 +1,126 @@
 package de.bellmannjan.javaguibuilder;
 
-import de.bellmannjan.javaguibuilder.Components.ResizableButton;
-import de.bellmannjan.javaguibuilder.Components.ResizableComponent;
-import de.bellmannjan.javaguibuilder.Components.ResizableInput;
-import de.bellmannjan.javaguibuilder.Components.ResizableText;
+import de.bellmannjan.javaguibuilder.Components.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Session {
-    private JInternalFrame internalFrame;
+
+    private final CustomFrame customFrame;
+    private ResizeableComponent selectedComponent;
     public int componentCounter = 0;
-    private ArrayList<ResizableComponent> resizableComponents = new ArrayList<>();
+    private final ArrayList<ResizeableComponent> resizeableComponents = new ArrayList<>();
 
+    /**
+     * Erstellen eines Internel-Frames.
+     * Hinzufügen des Freames zum Hauptprogramm
+     */
     public Session() {
-        initInternalFrame();
-        GUI.getFramePanel().add(getInternalFrame());
+        customFrame = new CustomFrame();
+        GUI.getFramePanel().add(customFrame);
     }
+
+    /**
+     * Schließen des Internal-Frames.
+     * Leeren der Komponentenliste (Liste unten Rechts).
+     * Leeren der Attributeinstellung (Tabelle oben Rechts)
+     */
     public void closeSession() {
-        getInternalFrame().setVisible(false);
-        getInternalFrame().getContentPane().removeAll();
-        getResizableComponents().clear();
-        getInternalFrame().getRootPane().remove(getInternalFrame());
+        customFrame.removeCustomFrame();
         GUI.getComponentPanel().getComponentListModel().clear();
+        GUI.getAttributPanel().clearTable();
 
     }
 
-    public ArrayList<ResizableComponent> getResizableComponents() {
-        return resizableComponents;
-    }
-    public ResizableComponent getResizableComponent(String componentName) {
-        for (ResizableComponent resizableComponent : getResizableComponents()) {
-            if (resizableComponent.getComponentName().equals(componentName)) {
-                return resizableComponent;
-            }
-        }
-        return null;
+    /**
+     * @return Alle Komponenten die auf der Internal-Frame hinzugefügt wurden
+     */
+    public ArrayList<ResizeableComponent> getResizableComponents() {
+        return resizeableComponents;
     }
 
+    /**
+     * @param componentString Variablenname der Komponente.
+     * @Description Erstellen einer neuen Komponente für das Internal-Frame. Festlegen der größe je nach Komponentenart. Komponente auswählen. Hinzufügen der Komponente in Liste und diese updaten.
+     */
     public void createResizableComponent(String componentString) {
-        ResizableComponent resizableComponent;
+        ResizeableComponent resizeableComponent;
         switch (componentString) {
             case "JLabel" -> {
-                resizableComponent = new ResizableText(new JLabel("Text"), "jLabel", false);
-                resizableComponent.setBounds(10, 10, 50, 20);
+                resizeableComponent = new ResizeableText(new JLabel("Text"), "jLabel");
+                resizeableComponent.setBounds(10, 10, 50, 20);
             }
             case "JTextField" -> {
-                resizableComponent = new ResizableInput(new JTextField(), "jTextField", false);
-                resizableComponent.setBounds(10, 10, 100, 20);
+                resizeableComponent = new ResizeableInput(new JTextField(), "jTextField");
+                resizeableComponent.setBounds(10, 10, 100, 20);
             }
             case "JButton" -> {
-                resizableComponent = new ResizableButton(new JButton("Button"),"jButton", false);
-                resizableComponent.setBounds(10, 10, 70, 20);
+                resizeableComponent = new ResizeableButton(new JButton("Button"),"jButton");
+                resizeableComponent.setBounds(10, 10, 70, 20);
             }
-            default -> resizableComponent = null;
+            case "JTextArea" -> {
+                resizeableComponent = new ResizeableTextArea(new JScrollPane(new JTextArea()),"jTextArea");
+                resizeableComponent.setBounds(10, 10, 150, 80);
+            }
+            default -> resizeableComponent = null;
         }
-        handleComponentClick();
-        getResizableComponents().add(resizableComponent);
-        getInternalFrame().getContentPane().add(resizableComponent);
-        getInternalFrame().updateUI();
+        setSelectedComponent(resizeableComponent);
+        getResizableComponents().add(resizeableComponent);
+        customFrame.getContentPane().add(resizeableComponent);
+        customFrame.updateUI();
 
-        GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent.getComponentName() + " : "
-                + resizableComponent.getComponentType().toUpperCase());
-        GUI.getComponentPanel().getComponentList().setSelectedIndex(getResizableComponents().size());
-
+        GUI.getComponentPanel().updateList();
         componentCounter++;
     }
-    public void removeResizableComponent(String componentName) {
-        ResizableComponent resizableComponent = getResizableComponent(componentName);
-        getResizableComponents().remove(resizableComponent);
-        getInternalFrame().getContentPane().remove(resizableComponent);
-        getInternalFrame().updateUI();
-        handleComponentClick();
+
+    /**
+     * @param resizeableComponent Komponente die entfernt werden soll
+     * @Description Entfernen der Komponente vom Internal-Frame. Ausgewählte Komponente auf Null setzen. Komponente aus der Liste entfernen und diese updaten
+     */
+    public void removeResizableComponent(ResizeableComponent resizeableComponent) {
+        setSelectedComponent(null);
+        getResizableComponents().remove(resizeableComponent);
+        customFrame.getContentPane().remove(resizeableComponent);
+        customFrame.updateUI();
+
+        GUI.getComponentPanel().updateList();
     }
 
-    public void handleComponentClick(ResizableComponent resizableComponent) {
-        handleComponentClick();
-        resizableComponent.setClicked(true);
-        resizableComponent.getAttributes();
+    /**
+     * @return Internal-Frame
+     */
+    public CustomFrame getCustomFrame() {
+        return customFrame;
     }
-    public void handleComponentClick() {
-        getResizableComponents().forEach(resizableComponent1 -> resizableComponent1.setClicked(false));
-        for (int r = 0; r < GUI.getAttributPanel().getTableModel().getRowCount(); r++) {
-            GUI.getAttributPanel().getTableModel().setValueAt("", r, 0);
-            GUI.getAttributPanel().getTableModel().setValueAt("", r, 1);
+
+    /**
+     * @return Die derzeit ausgewählte Komponente. (kann null sein)
+     */
+    public ResizeableComponent getSelectedComponent() {
+        return selectedComponent;
+    }
+
+    /**
+     * @param selectedComponent Komponente die ausgewählt werden soll
+     * @Description Alle Komponenten repainten (Sichtbarkeit der Auswahlränder). Attributeinstellung leeren.
+     * @Wenn Komponente ausgewählt: Dessen Attributeinstellungen in Tabelle eintragen.
+     * @Sonst Attribute der Internal-Frame in Attributeinstellungen eintragen.
+     */
+    public void setSelectedComponent(ResizeableComponent selectedComponent) {
+        this.selectedComponent = selectedComponent;
+        for (Component component : customFrame.getComponents()) {
+            component.repaint();
         }
-    }
+        GUI.getAttributPanel().clearTable();
 
-    public JInternalFrame getInternalFrame() {
-        return internalFrame;
-    }
-
-    public void initInternalFrame() {
-        internalFrame = new JInternalFrame("Meine GUI-Anwendung", true, false,false, false);
-        internalFrame.setLocation(20,20);
-        internalFrame.setSize(new Dimension(500,500));
-        internalFrame.getContentPane().setLayout(null);
-        internalFrame.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent me) {
-                handleComponentClick();
-                for (Component component : internalFrame.getComponents()) {
-                    component.repaint();
-                }
-            }
-        });
-
-        internalFrame.show();
+        if(selectedComponent != null) {
+            selectedComponent.getAttributes();
+            GUI.getComponentPanel().getComponentList().setSelectedIndex(getResizableComponents().indexOf(selectedComponent));
+        }else {
+            customFrame.getAttributes();
+            GUI.getComponentPanel().getComponentList().clearSelection();
+        }
     }
 }

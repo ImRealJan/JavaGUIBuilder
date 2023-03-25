@@ -5,18 +5,22 @@ import de.bellmannjan.javaguibuilder.GUI;
 import javax.swing.*;
 import java.awt.*;
 
-public class ResizableText extends ResizableComponent {
+public class ResizeableText extends ResizeableComponent {
 
-    JLabel label = (JLabel)jComponent;
+    private JLabel label = (JLabel)resizeableComponent;
 
-    public ResizableText(JComponent comp, String name, boolean hasScrollPane) {
-        super(comp, name, hasScrollPane);
+    public ResizeableText(JComponent comp, String name) {
+        super(comp, name);
+        init();
     }
 
+    /**
+     * Attribute der Komponente werden an Attributeinstellungen übergeben.
+     */
     public void getAttributes() {
 
         GUI.getAttributPanel().getTableModel().setValueAt("Name", 0, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(getComponentName(), 0, 1);
+        GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0, 1);
 
         GUI.getAttributPanel().getTableModel().setValueAt("Text", 1, 0);
         GUI.getAttributPanel().getTableModel().setValueAt(label.getText(), 1, 1);
@@ -25,11 +29,13 @@ public class ResizableText extends ResizableComponent {
         GUI.getAttributPanel().getTableModel().setValueAt(label.getFont().getSize(), 2, 1);
     }
 
-    @Override
+    /**
+     * Einträge aus Attributeinstellungen an JButton übergeben
+     */
     public void updateAttributes() {
 
         if(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString().equals(""))
-            GUI.getAttributPanel().getTableModel().setValueAt(getComponentName(), 0,1);
+            GUI.getAttributPanel().getTableModel().setValueAt(getName(), 0,1);
         try {
             Integer.parseInt(GUI.getAttributPanel().getTableModel().getValueAt(2,1).toString());
         } catch (Exception ex) {
@@ -37,7 +43,7 @@ public class ResizableText extends ResizableComponent {
         }
 
         label.setText(GUI.getAttributPanel().getTableModel().getValueAt(1,1).toString());
-        label.setFont(new Font("Arial", Font.PLAIN, Integer.parseInt(GUI.getAttributPanel().getTableModel().getValueAt(2,1).toString())));
+        label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(GUI.getAttributPanel().getTableModel().getValueAt(2,1).toString())));
         setName(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString());
     }
 }
