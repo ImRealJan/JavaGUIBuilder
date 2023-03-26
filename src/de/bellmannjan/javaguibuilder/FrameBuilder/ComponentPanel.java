@@ -21,6 +21,9 @@ public class ComponentPanel extends JPanel {
         return componentListModel;
     }
 
+    /**
+     * Design des Komponenten-Panels (Toolbar unten rechts). Den Buttons zur erzeugen der Komponenten jeweilige Funktion hinzufügen. Komponentenauswahlliste darunter hinzufügen und Navigationsbuttons für diese Liste
+     */
     public ComponentPanel() {
         setLayout(new BorderLayout());
 
@@ -61,6 +64,9 @@ public class ComponentPanel extends JPanel {
         componentListModel = new DefaultListModel<>();
         componentList = new JList<>(componentListModel);
         componentList.addListSelectionListener(new ListSelectionListener() {
+            /**
+             * @Description Wenn sich die Auswahl der Liste ändert soll die ausgwählte Komponente ebenfalls ändern
+             */
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(componentList.getSelectedIndex() != -1) {
@@ -117,6 +123,9 @@ public class ComponentPanel extends JPanel {
         add(selectComponentPanel, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Koponentenauswahlliste updaten indem alle Werte neu eingetragen werden
+     */
     public void updateList() {
         componentListModel.clear();
         GUI.getSession().getResizableComponents().forEach(resizableComponent1 -> GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent1.getName() + " : "

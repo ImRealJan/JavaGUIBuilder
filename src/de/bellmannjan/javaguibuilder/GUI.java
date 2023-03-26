@@ -4,16 +4,12 @@ import de.bellmannjan.javaguibuilder.FrameBuilder.AttributPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.CodeOutputPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.ComponentPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.GUIMenu;
+import de.bellmannjan.javaguibuilder.Tools.JavaCodeGenerator;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.util.Objects;
 
 public class GUI extends JFrame {
@@ -44,6 +40,10 @@ public class GUI extends JFrame {
 
   public static void setSession(Session session) {
     GUI.session = session;
+  }
+
+  public JFrame getInstance() {
+    return this;
   }
 
 
@@ -104,10 +104,24 @@ public class GUI extends JFrame {
 
       JButton runButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/run.gif"))));
       runButton.setToolTipText("GUI starten");
+      runButton.addActionListener(e -> {
+        if(getSession() != null) getSession().runTestFrame(getInstance());
+      });
       runButton.setMargin(new Insets(0,0,0,0));
 
       JButton outputButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/generate.gif"))));
       outputButton.setToolTipText("Code generieren");
+      outputButton.addActionListener(e -> {
+        if(getSession() != null) {
+          String output = JOptionPane.showInputDialog(null,"Klassenname eingeben:", getSession().getClassName());
+          if(output.equals("") ||output.contains(" ")) {
+            JOptionPane.showMessageDialog(null, "Klassenname ist ungültig!");
+          }else {
+            getSession().setClassName(output);
+            new JavaCodeGenerator().generateCode();
+          }
+        }
+      });
       outputButton.setMargin(new Insets(0,0,0,0));
 
       toolBar.add(runButton);

@@ -19,14 +19,16 @@ public class ResizeableText extends ResizeableComponent {
      */
     public void getAttributes() {
 
-        attributTableModel.setValueAt("Name", 0, 0);
-        attributTableModel.setValueAt(getName(), 0, 1);
 
-        attributTableModel.setValueAt("Text", 1, 0);
-        attributTableModel.setValueAt(label.getText(), 1, 1);
+        GUI.getAttributPanel().addTableEntry(0, "Name", new JTextField(getName()));
+        GUI.getAttributPanel().addTableEntry(1, "Text", new JTextField(label.getText()));
+        GUI.getAttributPanel().addTableEntry(2, "Tooltip", new JTextField(label.getToolTipText()));
+        JComboBox comboBox = new JComboBox<>(new Object[]{8,10,12,14,16,20,24,30});
+        comboBox.setSelectedItem(label.getFont().getSize());
+        GUI.getAttributPanel().addTableEntry(3, "Size", comboBox);
+        GUI.getAttributPanel().addTableEntry(4, "Visible", new JComboBox(new Object[]{label.isVisible(), !label.isVisible()}));
 
-        attributTableModel.setValueAt("Size", 2, 0);
-        attributTableModel.setValueAt(label.getFont().getSize(), 2, 1);
+        GUI.getAttributPanel().updateTable();
     }
 
     /**
@@ -34,16 +36,27 @@ public class ResizeableText extends ResizeableComponent {
      */
     public void updateAttributes() {
 
-        if(attributTableModel.getValueAt(0,1).toString().equals(""))
-            attributTableModel.setValueAt(getName(), 0,1);
-        try {
-            Integer.parseInt(attributTableModel.getValueAt(2,1).toString());
-        } catch (Exception ex) {
-            attributTableModel.setValueAt(label.getFont().getSize(), 2,1);
-        }
+        JTextField textField1 = (JTextField)GUI.getAttributPanel().getAttributetable().get(0).get(1);
+        if(textField1.getText().equals(""))
+            textField1.setText(getName());
+        else setName( textField1.getText());
 
-        label.setText(attributTableModel.getValueAt(1,1).toString());
-        label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(attributTableModel.getValueAt(2,1).toString())));
-        setName(attributTableModel.getValueAt(0,1).toString());
+        JTextField textField2 = (JTextField)GUI.getAttributPanel().getAttributetable().get(1).get(1);
+        label.setText(textField2.getText());
+
+        JTextField textField3 = (JTextField)GUI.getAttributPanel().getAttributetable().get(2).get(1);
+        label.setToolTipText(textField3.getText());
+
+        JComboBox comboBox = (JComboBox) GUI.getAttributPanel().getAttributetable().get(3).get(1);
+        label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(comboBox.getSelectedItem().toString())));
+
+        JComboBox comboBox2 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(4).get(1);
+        label.setVisible(Boolean.parseBoolean(comboBox2.getSelectedItem().toString()));
+    }
+    public JComponent getComponentInformations() {
+        return label;
+    }
+    public String getText() {
+        return label.getText();
     }
 }

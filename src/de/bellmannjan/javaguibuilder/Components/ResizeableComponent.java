@@ -18,8 +18,6 @@ public abstract class ResizeableComponent extends JComponent {
     private final String componentType;
     protected JComponent resizeableComponent;
 
-    protected DefaultTableModel attributTableModel;
-
     private int cursor;
     private  Point startpoint;
     private Point startPos;
@@ -31,11 +29,10 @@ public abstract class ResizeableComponent extends JComponent {
     public ResizeableComponent(JComponent comp, String name) {
         setLayout(new BorderLayout());
         add(comp);
-        setName(name + GUI.getSession().componentCounter);
-        componentType = name;
+        setName("j" + name + GUI.getSession().componentCounter);
+        componentType = "J" + name;
 
         resizeableComponent = comp;
-        attributTableModel = GUI.getAttributPanel().getTableModel();
     }
 
     /**
@@ -67,6 +64,16 @@ public abstract class ResizeableComponent extends JComponent {
      * Einträge aus Attributeinstellungen an Komponente übergeben. (Weitere Spezifikation in Unterklassen)
      */
     public abstract void updateAttributes();
+
+    /**
+     * @return Die Komponente mit allen Attributen (Schift, Größe...)
+     */
+    public abstract JComponent getComponentInformations();
+
+    /**
+     * @return Den Text der Komponente
+     */
+    public abstract String getText();
 
     /**
      * @return Den Typ der Komponente

@@ -8,29 +8,28 @@ import java.awt.*;
 public class ResizeableButton extends ResizeableComponent {
 
     private JButton button = (JButton) resizeableComponent;
+
+    private boolean actionPerformed = false;
     public ResizeableButton(JComponent comp, String name) {
         super(comp, name);
         init();
     }
-
-    //TODO add (addListener) function
     /**
      * Attribute der Komponente werden an Attributeinstellungen übergeben.
      */
     public void getAttributes() {
 
-        attributTableModel.setValueAt("Name", 0, 0);
-        attributTableModel.setValueAt(getName(), 0, 1);
+        GUI.getAttributPanel().addTableEntry(0, "Name", new JTextField(getName()));
+        GUI.getAttributPanel().addTableEntry(1, "Text", new JTextField(button.getText()));
+        GUI.getAttributPanel().addTableEntry(2, "Tooltip", new JTextField(button.getToolTipText()));
+        JComboBox comboBox = new JComboBox(new Object[]{8,10,12,14,16,20,24,30});
+        comboBox.setSelectedItem(button.getFont().getSize());
+        GUI.getAttributPanel().addTableEntry(3, "Size", comboBox);
+        GUI.getAttributPanel().addTableEntry(4, "Enabled", new JComboBox(new Object[]{button.isEnabled(), !button.isEnabled()}));
+        GUI.getAttributPanel().addTableEntry(5, "Visible", new JComboBox(new Object[]{button.isVisible(), !button.isVisible()}));
+        GUI.getAttributPanel().addTableEntry(6, "hasClickEvent", new JComboBox(new Object[]{actionPerformed, !actionPerformed}));
 
-        attributTableModel.setValueAt("Text", 1, 0);
-        attributTableModel.setValueAt(button.getText(), 1, 1);
-
-        attributTableModel.setValueAt("Size", 2, 0);
-        attributTableModel.setValueAt(button.getFont().getSize(), 2, 1);
-
-        //TODO render boolean as checkbox
-        attributTableModel.setValueAt("Enabled", 3, 0);
-        attributTableModel.setValueAt(button.isEnabled(), 3, 1);
+        GUI.getAttributPanel().updateTable();
     }
 
     /**
@@ -38,19 +37,34 @@ public class ResizeableButton extends ResizeableComponent {
      */
     public void updateAttributes() {
 
-        if(attributTableModel.getValueAt(0,1).toString().equals(""))
-            attributTableModel.setValueAt(getName(), 0,1);
-        try {
-            Boolean.parseBoolean(attributTableModel.getValueAt(3,1).toString());
-            Integer.parseInt(attributTableModel.getValueAt(2,1).toString());
-        } catch (Exception ex) {
-            attributTableModel.setValueAt(button.getFont().getSize(), 2,1);
-            attributTableModel.setValueAt(button.isEnabled(), 3,1);
-        }
+        JTextField textField1 = (JTextField)GUI.getAttributPanel().getAttributetable().get(0).get(1);
+        if(textField1.getText().equals(""))
+            textField1.setText(getName());
+        else setName( textField1.getText());
 
-        button.setText(attributTableModel.getValueAt(1,1).toString());
-        button.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(attributTableModel.getValueAt(2,1).toString())));
-        setName(attributTableModel.getValueAt(0,1).toString());
-        button.setEnabled(Boolean.parseBoolean(attributTableModel.getValueAt(3,1).toString()));
+        JTextField textField2 = (JTextField)GUI.getAttributPanel().getAttributetable().get(1).get(1);
+        button.setText(textField2.getText());
+
+        JTextField textField3 = (JTextField)GUI.getAttributPanel().getAttributetable().get(2).get(1);
+        button.setToolTipText(textField3.getText());
+
+        JComboBox comboBox1 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(3).get(1);
+        button.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(comboBox1.getSelectedItem().toString())));
+
+        JComboBox comboBox2 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(4).get(1);
+        button.setEnabled(Boolean.parseBoolean(comboBox2.getSelectedItem().toString()));
+
+        JComboBox comboBox3 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(5).get(1);
+        button.setVisible(Boolean.parseBoolean(comboBox3.getSelectedItem().toString()));
+
+        JComboBox comboBox4 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(6).get(1);
+        actionPerformed = Boolean.parseBoolean(comboBox4.getSelectedItem().toString());
+    }
+
+    public JComponent getComponentInformations() {
+        return button;
+    }
+    public String getText() {
+        return button.getText();
     }
 }

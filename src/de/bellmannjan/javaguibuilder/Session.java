@@ -1,6 +1,7 @@
 package de.bellmannjan.javaguibuilder;
 
 import de.bellmannjan.javaguibuilder.Components.*;
+import de.bellmannjan.javaguibuilder.Tools.ComponentCloner;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ public class Session {
     private final CustomFrame customFrame;
     private ResizeableComponent selectedComponent;
     public int componentCounter = 0;
+    private String className = "MeineKlasse";
     private final ArrayList<ResizeableComponent> resizeableComponents = new ArrayList<>();
 
     /**
@@ -30,7 +32,7 @@ public class Session {
     public void closeSession() {
         customFrame.removeCustomFrame();
         GUI.getComponentPanel().getComponentListModel().clear();
-        GUI.getAttributPanel().clearTable();
+        GUI.getAttributPanel().setDefaulTable();
 
     }
 
@@ -49,19 +51,19 @@ public class Session {
         ResizeableComponent resizeableComponent;
         switch (componentString) {
             case "JLabel" -> {
-                resizeableComponent = new ResizeableText(new JLabel("Text"), "jLabel");
+                resizeableComponent = new ResizeableText(new JLabel("Text"), "Label");
                 resizeableComponent.setBounds(10, 10, 50, 20);
             }
             case "JTextField" -> {
-                resizeableComponent = new ResizeableInput(new JTextField(), "jTextField");
+                resizeableComponent = new ResizeableInput(new JTextField(), "TextField");
                 resizeableComponent.setBounds(10, 10, 100, 20);
             }
             case "JButton" -> {
-                resizeableComponent = new ResizeableButton(new JButton("Button"),"jButton");
+                resizeableComponent = new ResizeableButton(new JButton("Button"),"Button");
                 resizeableComponent.setBounds(10, 10, 70, 20);
             }
             case "JTextArea" -> {
-                resizeableComponent = new ResizeableTextArea(new JScrollPane(new JTextArea()),"jTextArea");
+                resizeableComponent = new ResizeableTextArea(new JScrollPane(new JTextArea()),"TextArea");
                 resizeableComponent.setBounds(10, 10, 150, 80);
             }
             default -> resizeableComponent = null;
@@ -69,6 +71,7 @@ public class Session {
         setSelectedComponent(resizeableComponent);
         getResizableComponents().add(resizeableComponent);
         customFrame.getContentPane().add(resizeableComponent);
+        customFrame.getContentPane().setComponentZOrder(resizeableComponent, 0);
         customFrame.updateUI();
 
         GUI.getComponentPanel().updateList();
@@ -113,7 +116,7 @@ public class Session {
         for (Component component : customFrame.getComponents()) {
             component.repaint();
         }
-        GUI.getAttributPanel().clearTable();
+        GUI.getAttributPanel().setDefaulTable();
 
         if(selectedComponent != null) {
             selectedComponent.getAttributes();
@@ -122,5 +125,44 @@ public class Session {
             customFrame.getAttributes();
             GUI.getComponentPanel().getComponentList().clearSelection();
         }
+    }
+
+    /**
+     * @param owner Übergabe des JFrames vom Hauptprogramm
+     * @Description Erstellt ein JDialog indem man sieht wie das GUI-Fenster am Ende aussehen wird. Informationen vom JFrame werden an JDialog übergeben. Jede Komponente wird geklont und hinzugefügt.
+     */
+    public void runTestFrame(JFrame owner){
+        JDialog testframe = new JDialog(owner, true);
+        testframe.setTitle(customFrame.getTitle());
+        testframe.setResizable(customFrame.isResizable());
+        testframe.setLayout(null);
+        testframe.setSize(customFrame.getSize());
+
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (d.width - customFrame.getWidth()) / 2;
+        int y = (d.height - customFrame.getHeight()) / 2;
+        testframe.setLocation(x, y);
+
+        getResizableComponents().forEach(resizeableComponent -> {
+            JComponent component = new ComponentCloner(resizeableComponent).build();
+            testframe.add(component);
+        });
+
+        testframe.setVisible(true);
+    }
+
+    /**
+     * @return Den gewählten Namen der Klasse
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * @param className gewählter Name der Klasse
+     * @Description Setzt den Namen für die Klasse
+     */
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

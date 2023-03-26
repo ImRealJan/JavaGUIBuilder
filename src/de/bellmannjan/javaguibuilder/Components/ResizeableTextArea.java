@@ -15,7 +15,6 @@ public class ResizeableTextArea extends ResizeableComponent {
         JViewport jViewport = (JViewport)comp.getComponent(0);
         resizeableComponent = (JComponent) jViewport.getView();
         textArea = (JTextArea) resizeableComponent;
-        textArea.setEditable(false);
         textArea.setBackground(Color.white);
         init();
     }
@@ -24,11 +23,15 @@ public class ResizeableTextArea extends ResizeableComponent {
      * Attribute der Komponente werden an Attributeinstellungen übergeben.
      */
     public void getAttributes() {
-        attributTableModel.setValueAt("Name", 0, 0);
-        attributTableModel.setValueAt(getName(), 0, 1);
 
-        attributTableModel.setValueAt("Text", 1, 0);
-        attributTableModel.setValueAt(textArea.getText(), 1, 1);
+        GUI.getAttributPanel().addTableEntry(0, "Name", new JTextField(getName()));
+        GUI.getAttributPanel().addTableEntry(1, "Text", new JTextField(textArea.getText()));
+        GUI.getAttributPanel().addTableEntry(2, "Tooltip", new JTextField(textArea.getToolTipText()));
+        GUI.getAttributPanel().addTableEntry(3, "Enabled", new JComboBox(new Object[]{textArea.isEnabled(), !textArea.isEnabled()}));
+        GUI.getAttributPanel().addTableEntry(4, "Visible", new JComboBox(new Object[]{textArea.isVisible(), !textArea.isVisible()}));
+        GUI.getAttributPanel().addTableEntry(5, "Editable", new JComboBox(new Object[]{textArea.isEditable(), !textArea.isEditable()}));
+
+        GUI.getAttributPanel().updateTable();
     }
 
     /**
@@ -36,12 +39,33 @@ public class ResizeableTextArea extends ResizeableComponent {
      */
     public void updateAttributes() {
 
-        if(attributTableModel.getValueAt(0,1).toString().equals(""))
-            attributTableModel.setValueAt(getName(), 0,1);
 
-        textArea.setText(attributTableModel.getValueAt(1,1).toString());
+        JTextField textField1 = (JTextField)GUI.getAttributPanel().getAttributetable().get(0).get(1);
+        if(textField1.getText().equals(""))
+            textField1.setText(getName());
+        else setName( textField1.getText());
 
-        setName(attributTableModel.getValueAt(0,1).toString());
+        JTextField textField2 = (JTextField)GUI.getAttributPanel().getAttributetable().get(1).get(1);
+        textArea.setText(textField2.getText());
+
+        JTextField textField3 = (JTextField)GUI.getAttributPanel().getAttributetable().get(2).get(1);
+        textArea.setToolTipText(textField3.getText());
+
+        JComboBox comboBox1 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(3).get(1);
+        textArea.setEnabled(Boolean.parseBoolean(comboBox1.getSelectedItem().toString()));
+
+        JComboBox comboBox2 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(4).get(1);
+        textArea.setVisible(Boolean.parseBoolean(comboBox2.getSelectedItem().toString()));
+
+        JComboBox comboBox3 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(5).get(1);
+        textArea.setEditable(Boolean.parseBoolean(comboBox3.getSelectedItem().toString()));
 
     }
+    public JComponent getComponentInformations() {
+        return textArea;
+    }
+    public String getText() {
+        return textArea.getText();
+    }
+
 }

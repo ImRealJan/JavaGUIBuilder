@@ -42,25 +42,22 @@ public class CustomFrame extends JInternalFrame {
      * Attribute des Internal-Frames an Attributeinstellungen übergeben.
      */
     public void getAttributes() {
-        GUI.getAttributPanel().getTableModel().setValueAt("Titel", 0, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(getTitle(), 0, 1);
+        GUI.getAttributPanel().addTableEntry(0, "Titel", new JTextField(getTitle()));
+        GUI.getAttributPanel().addTableEntry(1, "Resizeable", new JComboBox(new Object[]{isResizable(), !isResizable()}));
 
-        GUI.getAttributPanel().getTableModel().setValueAt("Resizable", 1, 0);
-        GUI.getAttributPanel().getTableModel().setValueAt(isResizable(), 1, 1);
+        GUI.getAttributPanel().updateTable();
     }
 
     /**
      * Einträge aus Attributeinstellungen an JFrame übergeben.
      */
     public void updateAttributes() {
-        if(GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString().equals(""))
-            GUI.getAttributPanel().getTableModel().setValueAt(getTitle(), 0,1);
-        try {
-            Boolean.parseBoolean(GUI.getAttributPanel().getTableModel().getValueAt(1,1).toString());
-        } catch (Exception ex) {
-            GUI.getAttributPanel().getTableModel().setValueAt(isResizable(), 1,1);
-        }
-        setTitle( GUI.getAttributPanel().getTableModel().getValueAt(0,1).toString());
-        setResizable( Boolean.parseBoolean(GUI.getAttributPanel().getTableModel().getValueAt(1,1).toString()));
+        JTextField textField1 = (JTextField)GUI.getAttributPanel().getAttributetable().get(0).get(1);
+        if(textField1.getText().equals(""))
+            textField1.setText(getTitle());
+        else setTitle( textField1.getText());
+
+        JComboBox comboBox = (JComboBox) GUI.getAttributPanel().getAttributetable().get(1).get(1);
+        setResizable( Boolean.parseBoolean(comboBox.getSelectedItem().toString()));
     }
 }
