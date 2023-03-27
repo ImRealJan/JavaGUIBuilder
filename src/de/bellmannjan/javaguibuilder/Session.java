@@ -136,7 +136,7 @@ public class Session {
         testframe.setTitle(customFrame.getTitle());
         testframe.setResizable(customFrame.isResizable());
         testframe.setLayout(null);
-        testframe.setSize(customFrame.getSize());
+        testframe.setSize(new Dimension((int)customFrame.getSize().getWidth() + 5, (int)customFrame.getSize().getHeight() + 5));
 
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (d.width - customFrame.getWidth()) / 2;

@@ -67,4 +67,8 @@ public class ResizeableButton extends ResizeableComponent {
     public String getText() {
         return button.getText();
     }
+
+    public boolean hasEvent() {
+        return actionPerformed;
+    }
 }

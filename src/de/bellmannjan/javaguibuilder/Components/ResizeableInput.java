@@ -70,4 +70,8 @@ public class ResizeableInput extends ResizeableComponent {
     public String getText() {
         return textField.getText();
     }
+
+    public boolean hasEvent() {
+        return actionPerformed;
+    }
 }

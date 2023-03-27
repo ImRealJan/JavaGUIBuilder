@@ -67,5 +67,4 @@ public class ResizeableTextArea extends ResizeableComponent {
     public String getText() {
         return textArea.getText();
     }
-
 }
