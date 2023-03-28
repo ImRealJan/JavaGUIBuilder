@@ -1,8 +1,8 @@
 package de.bellmannjan.javaguibuilder.FrameBuilder;
 
-import de.bellmannjan.javaguibuilder.Account;
+import de.bellmannjan.javaguibuilder.AccountFrame;
 import de.bellmannjan.javaguibuilder.GUI;
-import de.bellmannjan.javaguibuilder.Login;
+import de.bellmannjan.javaguibuilder.LoginFrame;
 import de.bellmannjan.javaguibuilder.Session;
 
 import javax.swing.*;
@@ -40,7 +40,7 @@ public class GUIMenu extends JMenuBar {
         JSeparator separator = new JSeparator();
         JMenuItem kontoDetailMenuItem = new JMenuItem("Kontodetails");
         kontoDetailMenuItem.addActionListener(e -> {
-                new Account((JFrame) SwingUtilities.getRoot(this), true);
+                new AccountFrame((JFrame) SwingUtilities.getRoot(this), true);
         });
         JMenuItem logoutMenuItem = new JMenuItem("Abmelden");
         logoutMenuItem.addActionListener(e -> {
@@ -49,7 +49,7 @@ public class GUIMenu extends JMenuBar {
                 GUI.setSession(null);
             }
             GUI.setUser(null);
-            new Login((JFrame) SwingUtilities.getRoot(this), true);
+            new LoginFrame((JFrame) SwingUtilities.getRoot(this), true);
         });
 
 

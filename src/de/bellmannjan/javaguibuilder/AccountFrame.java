@@ -6,10 +6,10 @@ import java.awt.*;
 import java.awt.event.*;
 
 //TODO hübsch machen
-public class Account extends JDialog {
+public class AccountFrame extends JDialog {
 
     JPanel loginPanel;
-    public Account(JFrame owner, boolean modal) {
+    public AccountFrame(JFrame owner, boolean modal) {
         super(owner, modal);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(400,300);

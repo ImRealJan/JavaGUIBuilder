@@ -7,11 +7,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 //TODO hübsch machen
-public class Login extends JDialog {
+public class LoginFrame extends JDialog {
 
     JPanel loginPanel;
     JPanel registerPanel;
-    public Login(JFrame owner, boolean modal) {
+    public LoginFrame(JFrame owner, boolean modal) {
         super(owner, modal);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(400,300);

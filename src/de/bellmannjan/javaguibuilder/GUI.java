@@ -204,7 +204,7 @@ public class GUI extends JFrame {
       mySQL = new MySQL("javaguibuilder");
       mySQL.connect();
 
-      new Login(this, true);
+      new LoginFrame(this, true);
     });
   }
 
