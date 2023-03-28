@@ -45,7 +45,8 @@ public class ResizeableText extends ResizeableComponent {
         label.setText(textField2.getText());
 
         JTextField textField3 = (JTextField)GUI.getAttributPanel().getAttributetable().get(2).get(1);
-        label.setToolTipText(textField3.getText());
+        if(!textField3.getText().equals(""))
+            label.setToolTipText(textField3.getText());
 
         JComboBox comboBox = (JComboBox) GUI.getAttributPanel().getAttributetable().get(3).get(1);
         label.setFont(new Font("Arial", Font.BOLD, Integer.parseInt(comboBox.getSelectedItem().toString())));

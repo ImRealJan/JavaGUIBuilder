@@ -1,12 +1,20 @@
 package de.bellmannjan.javaguibuilder.FrameBuilder;
 
+import de.bellmannjan.javaguibuilder.Account;
 import de.bellmannjan.javaguibuilder.GUI;
+import de.bellmannjan.javaguibuilder.Login;
 import de.bellmannjan.javaguibuilder.Session;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class GUIMenu extends JMenuBar {
+
+    private JMenuItem accountName;
+
+    public JMenuItem getAccountName() {
+        return accountName;
+    }
 
     private JFileChooser openChooser = new JFileChooser();
     private JFileChooser saveChooser = new JFileChooser();
@@ -23,11 +31,26 @@ public class GUIMenu extends JMenuBar {
         JMenuItem exitMenuItem = new JMenuItem("Projekt schließen");
         exitMenuItem.addActionListener(e -> click_exitMenuItem(e));
 
-        JMenu bearbeitenMenu = new JMenu("Bearbeiten");
-
         JMenu hilfeMenu = new JMenu("Hilfe");
         JMenuItem openHelpMenuItem = new JMenuItem("Programmhilfe");
         JMenuItem openJavaHelpMenuItem = new JMenuItem("Javahilfe");
+
+        JMenu accountMenu = new JMenu("Konto");
+        accountName = new JMenuItem();
+        JSeparator separator = new JSeparator();
+        JMenuItem kontoDetailMenuItem = new JMenuItem("Kontodetails");
+        kontoDetailMenuItem.addActionListener(e -> {
+                new Account((JFrame) SwingUtilities.getRoot(this), true);
+        });
+        JMenuItem logoutMenuItem = new JMenuItem("Abmelden");
+        logoutMenuItem.addActionListener(e -> {
+            if(GUI.getSession() != null) {
+                GUI.getSession().closeSession();
+                GUI.setSession(null);
+            }
+            GUI.setUser(null);
+            new Login((JFrame) SwingUtilities.getRoot(this), true);
+        });
 
 
         add(dateiMenu);
@@ -36,11 +59,15 @@ public class GUIMenu extends JMenuBar {
         dateiMenu.add(saveMenuItem);
         dateiMenu.add(exitMenuItem);
 
-        add(bearbeitenMenu);
-
         add(hilfeMenu);
         hilfeMenu.add(openHelpMenuItem);
         hilfeMenu.add(openJavaHelpMenuItem);
+
+        add(accountMenu);
+        accountMenu.add(accountName);
+        accountMenu.add(separator);
+        accountMenu.add(kontoDetailMenuItem);
+        accountMenu.add(logoutMenuItem);
     }
 
     private void click_openMenuItem(ActionEvent e) {
@@ -102,11 +129,13 @@ public class GUIMenu extends JMenuBar {
             JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!", "", JOptionPane.OK_CANCEL_OPTION);
         }
     }
-    public void click_exitMenuItem(ActionEvent event) {
+    public void click_exitMenuItem(ActionEvent e) {
         if(GUI.getSession() != null) {
             //ToDO speicher abfrage danach:
             GUI.getSession().closeSession();
             GUI.setSession(null);
+        }else {
+            JOptionPane.showMessageDialog(null, "Es ist kein Projekt geöffnet!");
         }
     }
 }

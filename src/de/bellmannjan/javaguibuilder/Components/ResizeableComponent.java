@@ -3,7 +3,6 @@ package de.bellmannjan.javaguibuilder.Components;
 import de.bellmannjan.javaguibuilder.GUI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

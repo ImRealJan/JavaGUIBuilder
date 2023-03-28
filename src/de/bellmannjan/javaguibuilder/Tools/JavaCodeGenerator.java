@@ -11,8 +11,9 @@ import java.time.format.DateTimeFormatter;
 
 public class JavaCodeGenerator {
 
-    //TODO code aufteilen in Sinnabschnitte (Attribute, Frame, Komponenten, Methoden)
-
+    String attribute = "";
+    String components = "";
+    String methods = "";
     String code = "";
 
     private String asDescription(String description) {
@@ -53,6 +54,58 @@ public class JavaCodeGenerator {
 
     public void generateCode() {
 
+        methods += "  "+ asConstructor("public static void") + " main(" + asObject("String") + "[] args) {\n" +
+                   "    " + asConstructor("new") + " " + GUI.getSession().getClassName() + "();\n" +
+                   "  }\n\n";
+
+        GUI.getSession().getResizableComponents().forEach(resizeableComponent -> {
+            //Hinzufügen der Attribute für jede Komponente
+            attribute += "  " + asConstructor("private") + " "
+                + asObject(resizeableComponent.getComponentType()) + " " + resizeableComponent.getName() + " = "
+                + asConstructor("new") + " " + asObject(resizeableComponent.getComponentType()) + "();\n";
+            if(resizeableComponent instanceof ResizeableTextArea) {
+            attribute += "  " + asConstructor("private") + " " + asObject("JScrollPane") + " " + resizeableComponent.getName() + "ScrollPane = "
+                    + asConstructor("new") + " " + asObject("JScrollPane") + "(" + resizeableComponent.getName() + ");\n";
+            }
+
+            //Hinzufügen der Eigenschaften der einzelnen Komponenten
+            String componentName = resizeableComponent.getName();
+            if(resizeableComponent instanceof ResizeableTextArea) {
+                componentName += "ScrollPane";
+            }
+            components += "    " + componentName + ".setBounds(" + asString(resizeableComponent.getX()+"") + ","
+                    + asString(resizeableComponent.getY()+"") + ","
+                    + asString((resizeableComponent.getComponentInformations().getWidth()+1)+"") + ","
+                    + asString(resizeableComponent.getComponentInformations().getHeight()+"") + ");\n";
+            if(resizeableComponent.getText() != null)
+                components += "    " + componentName.replaceAll("ScrollPane", "") + ".setText(" + asString("\"" + resizeableComponent.getText() + "\"") + ");\n";
+            if(resizeableComponent.getComponentInformations().getToolTipText() != null && !resizeableComponent.getComponentInformations().getToolTipText().equals(""))
+                components += "    " + componentName + ".setToolTipText(" + asString("\"" + resizeableComponent.getComponentInformations().getToolTipText() + "\"") + ");\n";
+            components += "    " + componentName + ".setFont(" + asConstructor("new") + " Font("+ asString("\"Arial\"") + ", Font.BOLD, "+ asString(resizeableComponent.getComponentInformations().getFont().getSize() + "") + "));\n";
+            components += "    " + componentName + ".setEnabled(" + asConstructor(resizeableComponent.getComponentInformations().isEnabled()+"") + ");\n";
+            components += "    " + componentName + ".setVisible(" + asConstructor(resizeableComponent.getComponentInformations().isVisible()+"") + ");\n";
+            if(resizeableComponent.getComponentInformations() instanceof JTextField textField)
+                components += "    " + componentName.replaceAll("ScrollPane", "") + ".setEditable(" + asConstructor(textField.isEditable()+"") + ");\n";
+            if(resizeableComponent.getComponentInformations() instanceof JTextArea textArea)
+                components += "    " + componentName.replaceAll("ScrollPane", "") + ".setEditable(" + asConstructor(textArea.isEditable()+"") + ");\n";
+            if((resizeableComponent instanceof ResizeableButton resizeableButton && resizeableButton.hasEvent()) || (resizeableComponent instanceof ResizeableInput resizeableInput && resizeableInput.hasEvent())) {
+                components += "    " + componentName + ".addActionListener(" + asConstructor("new") + " ActionListener(){\n" +
+                        "      " + asConstructor("public void") + " actionPerformed(ActionEvent evt) {\n" +
+                        "        " + componentName + "_ActionPerformed(evt);\n" +
+                        "      }\n" +
+                        "    });\n";
+            }
+            components +="    cp.add(" + componentName + ");\n\n";
+
+
+            //Hinzufügen der Events der einzelnen Komponenten
+            if((resizeableComponent instanceof ResizeableButton resizeableButton && resizeableButton.hasEvent()) || (resizeableComponent instanceof ResizeableInput resizeableInput && resizeableInput.hasEvent()))
+                methods += "  " + asConstructor("public void") + " " + resizeableComponent.getName() + "_ActionPerformed(ActionEvent evt) {\n" +
+                        "    " + asDescription("// TODO hier Quelltext einfügen") + "\n" +
+                        "  }\n\n";
+        });
+
+        //Zusammenführen der Strings zu einem Produkt
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDateTime now = LocalDateTime.now();
 
@@ -61,7 +114,6 @@ public class JavaCodeGenerator {
                 asConstructor("import") + " java.awt.event.*;\n" +
                 asConstructor("import") + " javax.swing.*;\n" +
                 asConstructor("import") + " javax.swing.event.*;\n\n";
-
         code+= asDescription(
                 "/**\n" +
                 " *\n" +
@@ -70,20 +122,9 @@ public class JavaCodeGenerator {
                 " * @version 1.0 vom " + dtf.format(now) +"\n" +
                 " * @author\n" +
                 " */\n\n");
-
         code += asConstructor("public class ") + GUI.getSession().getClassName() + " " + asConstructor("extends") + " JFrame {\n\n";
-
-        GUI.getSession().getResizableComponents().forEach(resizeableComponent -> {
-            code += "  " + asConstructor("private") + " "
-                + asObject(resizeableComponent.getComponentType()) + " " + resizeableComponent.getName() + " = "
-                + asConstructor("new") + " " + asObject(resizeableComponent.getComponentType()) + "();\n\n";
-            if(resizeableComponent instanceof ResizeableTextArea) {
-            code += "  " + asConstructor("private") + " " + asObject("JScrollPane") + " " + resizeableComponent.getName() + "ScrollPane = "
-                    + asConstructor("new") + " " + asObject("JScrollPane") + "(" + resizeableComponent.getName() + ");";
-            }
-        });
-
-        code += "\n  " + asConstructor("public") + " " + GUI.getSession().getClassName() + "() {\n" +
+        code += attribute;
+        code += "\n\n  " + asConstructor("public") + " " + GUI.getSession().getClassName() + "() {\n" +
                 "    " + asConstructor("super") + "();\n" +
                 "    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);\n" +
                 "    setSize(" + asString((GUI.getSession().getCustomFrame().getWidth()+5) + "") + ", " + asString((GUI.getSession().getCustomFrame().getHeight()+5) + "") +");\n" +
@@ -93,51 +134,10 @@ public class JavaCodeGenerator {
                 "    setResizable(" + asConstructor(GUI.getSession().getCustomFrame().isResizable()+"") + ");\n" +
                 "    Container cp = getContentPane();\n" +
                 "    cp.setLayout(" + asConstructor("null") + ");\n\n";
-
-        GUI.getSession().getResizableComponents().forEach(resizeableComponent -> {
-            String componentName = resizeableComponent.getName();
-            if(resizeableComponent instanceof ResizeableTextArea) {
-                componentName += "ScrollPane";
-            }
-            code += "    " + componentName + ".setBounds(" + asString(resizeableComponent.getX()+"") + ","
-                    + asString(resizeableComponent.getY()+"") + ","
-                    + asString(resizeableComponent.getComponentInformations().getWidth()+"") + ","
-                    + asString(resizeableComponent.getComponentInformations().getHeight()+"") + ");\n";
-            if(resizeableComponent.getText() != null)
-                code += "    " + componentName.replaceAll("ScrollPane", "") + ".setText(" + asString("\"" + resizeableComponent.getText() + "\"") + ");\n";
-            if(resizeableComponent.getComponentInformations().getToolTipText() != null && !resizeableComponent.getComponentInformations().getToolTipText().equals(""))
-                code += "    " + componentName + ".setToolTipText(" + asString("\"" + resizeableComponent.getComponentInformations().getToolTipText() + "\"") + ");\n";
-            code += "    " + componentName + ".setFont(" + asConstructor("new") + " Font("+ asString("\"Arial\"") + ", Font.BOLD, "+ asString(resizeableComponent.getComponentInformations().getFont().getSize() + "") + "));\n";
-            code += "    " + componentName + ".setEnabled(" + asConstructor(resizeableComponent.getComponentInformations().isEnabled()+"") + ");\n";
-            code += "    " + componentName + ".setVisible(" + asConstructor(resizeableComponent.getComponentInformations().isVisible()+"") + ");\n";
-            if(resizeableComponent.getComponentInformations() instanceof JTextField textField)
-                code += "    " + componentName.replaceAll("ScrollPane", "") + ".setEditable(" + asConstructor(textField.isEditable()+"") + ");\n";
-            if(resizeableComponent.getComponentInformations() instanceof JTextArea textArea)
-                code += "    " + componentName.replaceAll("ScrollPane", "") + ".setEditable(" + asConstructor(textArea.isEditable()+"") + ");\n";
-            if((resizeableComponent instanceof ResizeableButton resizeableButton && resizeableButton.hasEvent()) || (resizeableComponent instanceof ResizeableInput resizeableInput && resizeableInput.hasEvent())) {
-                code += "    " + componentName + ".addActionListener(" + asConstructor("new") + " ActionListener(){\n" +
-                        "      " + asConstructor("public void") + " actionPerformed(ActionEvent evt) {\n" +
-                        "        " + componentName + "_ActionPerformed(evt);\n" +
-                        "      }\n" +
-                        "    });\n";
-            }
-            code +="    cp.add(" + componentName + ");\n\n";
-                });
-
-        code += "    setVisible("+ asConstructor("true") + ");\n" +
-                "  }\n\n";
-        code += "  "+ asConstructor("public static void") + " main(" + asObject("String") + "[] args) {\n" +
-                "    " + asConstructor("new") + " " + GUI.getSession().getClassName() + "();\n" +
-                "  }\n\n";
-
-        GUI.getSession().getResizableComponents().forEach(resizeableComponent -> {
-
-            if((resizeableComponent instanceof ResizeableButton resizeableButton && resizeableButton.hasEvent()) || (resizeableComponent instanceof ResizeableInput resizeableInput && resizeableInput.hasEvent()))
-                code += "  " + asConstructor("public void") + " " + resizeableComponent.getName() + "_ActionPerformed(ActionEvent evt) {\n" +
-                        "    // TODO hier Quelltext einfügen\n" +
-                        "    \n" +
-                        "  }\n\n";
-        });
+        code += components;
+        code += "    setVisible("+ asConstructor("true") + ");\n";
+        code += "  }\n\n";
+        code += methods;
         code += "}";
         code += "</pre></code></html>";
 

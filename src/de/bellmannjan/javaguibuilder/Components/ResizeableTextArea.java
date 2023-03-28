@@ -4,6 +4,8 @@ import de.bellmannjan.javaguibuilder.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ResizeableTextArea extends ResizeableComponent {
 
@@ -16,6 +18,12 @@ public class ResizeableTextArea extends ResizeableComponent {
         resizeableComponent = (JComponent) jViewport.getView();
         textArea = (JTextArea) resizeableComponent;
         textArea.setBackground(Color.white);
+        textArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                e.consume();
+            }
+        });
         init();
     }
 
@@ -49,7 +57,8 @@ public class ResizeableTextArea extends ResizeableComponent {
         textArea.setText(textField2.getText());
 
         JTextField textField3 = (JTextField)GUI.getAttributPanel().getAttributetable().get(2).get(1);
-        textArea.setToolTipText(textField3.getText());
+        if(!textField3.getText().equals(""))
+            textArea.setToolTipText(textField3.getText());
 
         JComboBox comboBox1 = (JComboBox) GUI.getAttributPanel().getAttributetable().get(3).get(1);
         textArea.setEnabled(Boolean.parseBoolean(comboBox1.getSelectedItem().toString()));

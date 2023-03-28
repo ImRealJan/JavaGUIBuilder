@@ -2,6 +2,7 @@ package de.bellmannjan.javaguibuilder;
 
 import de.bellmannjan.javaguibuilder.Components.*;
 import de.bellmannjan.javaguibuilder.Tools.ComponentCloner;
+import de.bellmannjan.javaguibuilder.Tools.JavaCodeGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,7 @@ public class Session {
     public Session() {
         customFrame = new CustomFrame();
         GUI.getFramePanel().add(customFrame);
+        GUI.getTabbedPane().setEnabledAt(1, true);
     }
 
     /**
@@ -33,6 +35,10 @@ public class Session {
         customFrame.removeCustomFrame();
         GUI.getComponentPanel().getComponentListModel().clear();
         GUI.getAttributPanel().setDefaulTable();
+        GUI.getTabbedPane().setSelectedIndex(0);
+        GUI.getTabbedPane().setEnabledAt(1, false);
+        GUI.getGuiMenu().getAccountName().setText("");
+        GUI.getCodeOutputPanel().setText(new JavaCodeGenerator().generateDefaultCode());
 
     }
 

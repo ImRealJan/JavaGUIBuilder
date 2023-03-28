@@ -3,6 +3,8 @@ package de.bellmannjan.javaguibuilder.Tools;
 import de.bellmannjan.javaguibuilder.Components.*;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class ComponentCloner {
@@ -44,6 +46,7 @@ public class ComponentCloner {
      */
     public JComponent build() {
         clonedComponent.setBounds(component.getBounds());
+        clonedComponent.setSize(clonedComponent.getWidth()+1, clonedComponent.getHeight());
         clonedComponent.setName(component.getComponentInformations().getName());
         if(component.getComponentInformations().getToolTipText() != null && !component.getComponentInformations().getToolTipText().equals(""))
             clonedComponent.setToolTipText(component.getComponentInformations().getToolTipText());

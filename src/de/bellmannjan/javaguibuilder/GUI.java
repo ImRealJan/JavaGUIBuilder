@@ -5,6 +5,8 @@ import de.bellmannjan.javaguibuilder.FrameBuilder.CodeOutputPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.ComponentPanel;
 import de.bellmannjan.javaguibuilder.FrameBuilder.GUIMenu;
 import de.bellmannjan.javaguibuilder.Tools.JavaCodeGenerator;
+import de.bellmannjan.javaguibuilder.Tools.MySQL;
+import de.bellmannjan.javaguibuilder.Tools.User;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -15,11 +17,20 @@ import java.util.Objects;
 public class GUI extends JFrame {
 
   private static Session session;
+
+  private static GUIMenu guiMenu;
   private static JDesktopPane guiDeskPane;
   private static AttributPanel attributPanel;
   private static CodeOutputPanel codeOutputPanel;
   private static ComponentPanel componentPanel;
+  private static JTabbedPane tabbedPane;
+  private static MySQL mySQL;
 
+  private static User user;
+
+  public static GUIMenu getGuiMenu() {
+    return guiMenu;
+  }
   public static AttributPanel getAttributPanel() {
     return attributPanel;
   }
@@ -32,20 +43,27 @@ public class GUI extends JFrame {
   public static JDesktopPane getFramePanel() {
     return guiDeskPane;
   }
-
-
+  public static JTabbedPane getTabbedPane() {
+    return tabbedPane;
+  }
   public static Session getSession() {
     return session;
   }
-
   public static void setSession(Session session) {
     GUI.session = session;
   }
-
   public JFrame getInstance() {
     return this;
   }
-
+  public static MySQL getMySQL() {
+    return mySQL;
+  }
+  public static User getUser() {
+    return user;
+  }
+  public static void setUser(User user) {
+    GUI.user = user;
+  }
 
   /**
    * In dieser Klasse wird das Design des Hauptprogramm-Fensters festgelegt.
@@ -80,19 +98,20 @@ public class GUI extends JFrame {
       setLayout(new BorderLayout());
 
       //Menüleiste
-      GUIMenu guiMenu = new GUIMenu();
+      guiMenu = new GUIMenu();
       setJMenuBar(guiMenu);
       requestFocus();
 
       //Content
       //Erstellen von 2 Tabs für Codegenerierung und GUI-Design
-      JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+      tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
       JPanel designPanel = new JPanel(new BorderLayout());
       JPanel codePanel = new JPanel(new BorderLayout());
 
       tabbedPane.addTab("Design", designPanel);
       tabbedPane.addTab("Code", codePanel);
+      tabbedPane.setEnabledAt(1, false);
       add(tabbedPane, BorderLayout.CENTER);
 
       //Code-Fenster
@@ -105,7 +124,9 @@ public class GUI extends JFrame {
       JButton runButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/run.gif"))));
       runButton.setToolTipText("GUI starten");
       runButton.addActionListener(e -> {
-        if(getSession() != null) getSession().runTestFrame(getInstance());
+        if(getSession() != null) {
+          getSession().runTestFrame(getInstance());
+        }
       });
       runButton.setMargin(new Insets(0,0,0,0));
 
@@ -114,7 +135,8 @@ public class GUI extends JFrame {
       outputButton.addActionListener(e -> {
         if(getSession() != null) {
           String output = JOptionPane.showInputDialog(null,"Klassenname eingeben:", getSession().getClassName());
-          if(output.equals("") ||output.contains(" ")) {
+          if (output == null) return;
+          if(output.equals("") || output.contains(" ")) {
             JOptionPane.showMessageDialog(null, "Klassenname ist ungültig!");
           }else {
             getSession().setClassName(output);
@@ -167,7 +189,6 @@ public class GUI extends JFrame {
       add(bottomPanel, BorderLayout.PAGE_END);
 
       addWindowListener(new WindowAdapter() {
-
         @Override
         public void windowClosing(WindowEvent e) {
           if(getSession() != null) {
@@ -179,8 +200,15 @@ public class GUI extends JFrame {
 
       setExtendedState(JFrame.MAXIMIZED_BOTH);
       setVisible(true);
+
+      mySQL = new MySQL("javaguibuilder");
+      mySQL.connect();
+
+      new Login(this, true);
     });
   }
+
+
   public static void main(String[] args) {
     new GUI();
   }
