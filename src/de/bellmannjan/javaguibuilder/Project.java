@@ -6,6 +6,7 @@ import de.bellmannjan.javaguibuilder.Tools.JavaCodeGenerator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,23 +71,23 @@ public class Project {
      * @param componentString Variablenname der Komponente.
      * @Description Erstellen einer neuen Komponente für das Internal-Frame. Festlegen der größe je nach Komponentenart. Komponente auswählen. Hinzufügen der Komponente in Liste und diese updaten.
      */
-    public ResizeableComponent createResizableComponent(String componentString, int id) {
+    public ResizeableComponent createResizableComponent(String componentString) {
         ResizeableComponent resizeableComponent;
         switch (componentString) {
             case "JLabel" -> {
-                resizeableComponent = new ResizeableText(new JLabel("Text"), "Label", id);
+                resizeableComponent = new ResizeableText(new JLabel("Text"), "Label");
                 resizeableComponent.setBounds(10, 10, 50, 20);
             }
             case "JTextField" -> {
-                resizeableComponent = new ResizeableInput(new JTextField(), "TextField", id);
+                resizeableComponent = new ResizeableInput(new JTextField(), "TextField");
                 resizeableComponent.setBounds(10, 10, 100, 20);
             }
             case "JButton" -> {
-                resizeableComponent = new ResizeableButton(new JButton("Button"),"Button", id);
+                resizeableComponent = new ResizeableButton(new JButton("Button"),"Button");
                 resizeableComponent.setBounds(10, 10, 70, 20);
             }
             case "JTextArea" -> {
-                resizeableComponent = new ResizeableTextArea(new JScrollPane(new JTextArea()),"TextArea", id);
+                resizeableComponent = new ResizeableTextArea(new JScrollPane(new JTextArea()),"TextArea");
                 resizeableComponent.setBounds(10, 10, 150, 80);
             }
             default -> resizeableComponent = null;
@@ -205,6 +206,8 @@ public class Project {
                         + customFrame.isResizable() + ", '" + lastUpdated + "', " + GUI.getUser().getUid() + ")");
             }
 
+            GUI.getMySQL().update("DELETE FROM component WHERE `projectid` = " + projectid);
+
             getResizableComponents().forEach(resizeableComponent -> {
                 boolean editable = false;
                 boolean hasClickEvent = false;
@@ -220,23 +223,13 @@ public class Project {
                 if(resizeableComponent instanceof ResizeableInput resizeableInput) {
                     hasClickEvent = resizeableInput.hasEvent();
                 }
-
-                if(resizeableComponent.getComponentID() == 0) {
-                    GUI.getMySQL().update("INSERT INTO `component` (`componentid`, `name`, `x`, `y`, `height`, `width`, `tooltiptext`, " +
-                            "`fontsize`, `enabled`, `visible`, `text`, `editable`, `clickevent`, `componentType`, `projectid`) " +
-                            "VALUES (NULL, '" + resizeableComponent.getName() + "', " + resizeableComponent.getX() + ", " + resizeableComponent.getY() + ", "
-                            + resizeableComponent.getHeight() + ", " + resizeableComponent.getWidth() + ", '" + resizeableComponent.getComponentInformations().getToolTipText() + "', "
-                            + resizeableComponent.getComponentInformations().getFont().getSize() + ", "
-                            + resizeableComponent.getComponentInformations().isEnabled() + ", " + resizeableComponent.getComponentInformations().isVisible() + ", '"
-                            + resizeableComponent.getText() + "', " + editable + ", " + hasClickEvent + ", '" + resizeableComponent.getComponentType() + "', " + projectid + ")");
-                }else {
-                   GUI.getMySQL().update("UPDATE `component` SET `name` = '" + resizeableComponent.getName() + "', `x` = " + resizeableComponent.getX() + ", `y` = "
-                           + resizeableComponent.getY() + ", `height` = " + resizeableComponent.getHeight() + ", `width` = " + resizeableComponent.getWidth() + ", `tooltiptext` = '"
-                           + resizeableComponent.getComponentInformations().getToolTipText() + "', `fontsize` = " + resizeableComponent.getComponentInformations().getFont().getSize() +
-                           ", `enabled` = " + resizeableComponent.getComponentInformations().isEnabled() + ", `visible` = "
-                           + resizeableComponent.getComponentInformations().isVisible() + ", `text` = '" + resizeableComponent.getText() + "', `editable` = "
-                           + editable + ", `clickevent` = " + hasClickEvent +  " WHERE `componentid` = " + resizeableComponent.getComponentID());
-                }
+                GUI.getMySQL().update("INSERT INTO `component` (`componentid`, `name`, `x`, `y`, `height`, `width`, `tooltiptext`, " +
+                        "`fontsize`, `enabled`, `visible`, `text`, `editable`, `clickevent`, `componentType`, `projectid`) " +
+                        "VALUES (NULL, '" + resizeableComponent.getName() + "', " + resizeableComponent.getX() + ", " + resizeableComponent.getY() + ", "
+                        + resizeableComponent.getHeight() + ", " + resizeableComponent.getWidth() + ", '" + resizeableComponent.getComponentInformations().getToolTipText() + "', "
+                        + resizeableComponent.getComponentInformations().getFont().getSize() + ", "
+                        + resizeableComponent.getComponentInformations().isEnabled() + ", " + resizeableComponent.getComponentInformations().isVisible() + ", '"
+                        + resizeableComponent.getText() + "', " + editable + ", " + hasClickEvent + ", '" + resizeableComponent.getComponentType() + "', " + projectid + ")");
             });
 
         }
@@ -255,7 +248,8 @@ public class Project {
             GUI.getMySQL().createTable();
 
             for (int row = 0; row < GUI.getMySQL().getList().size(); row++) {
-                ResizeableComponent resizeableComponent = createResizableComponent(GUI.getMySQL().getList().get(row).get(13), Integer.parseInt(GUI.getMySQL().getList().get(row).get(0)));
+                ResizeableComponent resizeableComponent = createResizableComponent(GUI.getMySQL().getList().get(row).get(13));
+                resizeableComponent.setName(GUI.getMySQL().getList().get(row).get(1));
                 resizeableComponent.setBounds(Integer.parseInt(GUI.getMySQL().getList().get(row).get(2)), Integer.parseInt(GUI.getMySQL().getList().get(row).get(3)),Integer.parseInt(GUI.getMySQL().getList().get(row).get(5)),Integer.parseInt(GUI.getMySQL().getList().get(row).get(4)));
                 if(!GUI.getMySQL().getList().get(row).get(6).equals("null"))
                     resizeableComponent.getComponentInformations().setToolTipText(GUI.getMySQL().getList().get(row).get(6));

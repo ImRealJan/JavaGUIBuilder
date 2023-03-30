@@ -9,8 +9,8 @@ public class ResizeableText extends ResizeableComponent {
 
     private JLabel label = (JLabel)resizeableComponent;
 
-    public ResizeableText(JComponent comp, String name, int id) {
-        super(comp, name, id);
+    public ResizeableText(JComponent comp, String name) {
+        super(comp, name);
         init();
     }
 

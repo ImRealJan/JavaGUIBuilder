@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GUI extends JFrame {
@@ -95,6 +97,10 @@ public class GUI extends JFrame {
       setLocationRelativeTo(null);
       setTitle("Java GUI Builder");
       setLayout(new BorderLayout());
+      List<Image> icons = new ArrayList<>();
+      icons.add(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/iconTaskBar.gif"))).getImage());
+      icons.add(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/iconWindow.gif"))).getImage());
+      setIconImages(icons);
 
       //Menüleiste
       guiMenu = new GUIMenu();
@@ -203,7 +209,7 @@ public class GUI extends JFrame {
       if(mySQL.connect()) {
         new LoginFrame(this, true);
       }else {
-        JOptionPane.showMessageDialog(null, "Datenbankverbindung konnte nicht eingerichtet werden!");
+        JOptionPane.showMessageDialog(null, "Keine Verbindung zur Datenbank!");
         this.dispose();
       }
     });

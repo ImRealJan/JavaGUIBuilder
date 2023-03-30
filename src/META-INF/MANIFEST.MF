@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: de.bellmannjan.javaguibuilder.GUI
+Created-By: Jan Bellmann
+
+

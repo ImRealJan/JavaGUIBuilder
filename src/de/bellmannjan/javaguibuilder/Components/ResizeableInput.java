@@ -13,8 +13,8 @@ public class ResizeableInput extends ResizeableComponent {
     private boolean actionPerformed = false;
 
     private JTextField textField = (JTextField) resizeableComponent;
-    public ResizeableInput(JComponent comp, String name, int id) {
-        super(comp, name, id);
+    public ResizeableInput(JComponent comp, String name) {
+        super(comp, name);
         textField.setBackground(Color.white);
         textField.addKeyListener(new KeyAdapter() {
             @Override

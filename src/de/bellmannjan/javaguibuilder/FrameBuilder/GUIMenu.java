@@ -85,11 +85,13 @@ public class GUIMenu extends JMenuBar {
     }
 
     private void click_openMenuItem(ActionEvent e) {
+        boolean isCanceled= false;
         if(GUI.getProject() != null) {
-            handleSaveOption();
+           if(handleSaveOption()) isCanceled = true;
         }
         if(GUI.getMySQL().isConnected()) {
-            new ProjectListFrame((JFrame) SwingUtilities.getRoot(this), true);
+            if(!isCanceled)
+                new ProjectListFrame((JFrame) SwingUtilities.getRoot(this), true);
         }
     }
 
@@ -103,9 +105,11 @@ public class GUIMenu extends JMenuBar {
     }
 
     private void click_newMenuItem(ActionEvent e) {
+        boolean isCanceled= false;
         if(GUI.getProject() != null) {
-            handleSaveOption();
+            if(handleSaveOption()) isCanceled = true;
         }
+        if(!isCanceled) {
             String projectname = JOptionPane.showInputDialog("Gebe einen Projektnamen ein:");
             if(projectname!= null) {
                 if(projectname.contains(" ")) {
@@ -127,6 +131,7 @@ public class GUIMenu extends JMenuBar {
                     }
                 }
             }
+        }
     }
     public void click_exitMenuItem(ActionEvent e) {
         if(GUI.getProject() != null) {
@@ -136,15 +141,16 @@ public class GUIMenu extends JMenuBar {
         }
     }
 
-    public void handleSaveOption() {
+    public boolean handleSaveOption() {
         int answer = JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!\nJetzt speichern?", "", JOptionPane.YES_NO_CANCEL_OPTION);
         if(answer == JOptionPane.YES_OPTION) {
             GUI.getProject().saveProject();
         }
-        if(answer == JOptionPane.CANCEL_OPTION)
-            return;
+        if(answer == JOptionPane.CANCEL_OPTION) {
+            return true;
+        }
         GUI.getProject().closeSession();
         GUI.setProject(null);
-
+        return false;
     }
 }

@@ -17,8 +17,6 @@ public abstract class ResizeableComponent extends JComponent {
     private final String componentType;
     protected JComponent resizeableComponent;
 
-    private int componentid;
-
     private int cursor;
     private  Point startpoint;
     private Point startPos;
@@ -27,12 +25,11 @@ public abstract class ResizeableComponent extends JComponent {
      * @param comp Komponente die Veränderbar werden soll
      * @param name Attributname für die Komponente
      */
-    public ResizeableComponent(JComponent comp, String name, int id) {
+    public ResizeableComponent(JComponent comp, String name) {
         setLayout(new BorderLayout());
         add(comp);
 
         componentType = "J" + name;
-        componentid = id;
 
         resizeableComponent = comp;
 
@@ -93,12 +90,6 @@ public abstract class ResizeableComponent extends JComponent {
         return componentType;
     }
 
-    /**
-     * @return Die ID der Komponente
-     */
-    public int getComponentID() {
-        return componentid;
-    }
 
     /**
      * Hinzufügen von Maus-Events und der ResizeableBorder zur Komponente

@@ -34,13 +34,13 @@ public class ComponentPanel extends JPanel {
         JPanel contentPanel = new JPanel(new FlowLayout());
         contentPanel.setBorder(BorderFactory.createTitledBorder("Komponenten:"));
 
-        JButton buttonAddText = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("../images/componentIcons/jlabel.gif"))));
+        JButton buttonAddText = new JButton(new ImageIcon(Objects.requireNonNull(GUI.class.getResource("images/componentIcons/jlabel.gif"))));
         buttonAddText.setToolTipText("JLabel");
-        JButton buttonAddButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("../images/componentIcons/jbutton.gif"))));
+        JButton buttonAddButton = new JButton(new ImageIcon(Objects.requireNonNull(GUI.class.getResource("images/componentIcons/jbutton.gif"))));
         buttonAddButton.setToolTipText("JButton");
-        JButton buttonAddTextField = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("../images/componentIcons/jtextfield.gif"))));
+        JButton buttonAddTextField = new JButton(new ImageIcon(Objects.requireNonNull(GUI.class.getResource("images/componentIcons/jtextfield.gif"))));
         buttonAddTextField.setToolTipText("JTextField");
-        JButton buttonAddTextArea = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("../images/componentIcons/jtextarea.gif"))));
+        JButton buttonAddTextArea = new JButton(new ImageIcon(Objects.requireNonNull(GUI.class.getResource("images/componentIcons/jtextarea.gif"))));
         buttonAddTextArea.setToolTipText("JTextArea");
 
         contentPanel.add(buttonAddText);
@@ -53,7 +53,7 @@ public class ComponentPanel extends JPanel {
                 button.setMargin(new Insets(0,0,0,0));
                 button.addActionListener(e -> {
                     if(GUI.getProject() != null)
-                        GUI.getProject().createResizableComponent(button.getToolTipText(), 0);
+                        GUI.getProject().createResizableComponent(button.getToolTipText());
                 });
             }
         }
