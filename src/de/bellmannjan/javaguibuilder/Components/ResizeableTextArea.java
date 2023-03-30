@@ -11,8 +11,8 @@ public class ResizeableTextArea extends ResizeableComponent {
 
     private JTextArea textArea;
 
-    public ResizeableTextArea(JComponent comp, String name) {
-        super(comp, name);
+    public ResizeableTextArea(JComponent comp, String name, int id) {
+        super(comp, name, id);
 
         JViewport jViewport = (JViewport)comp.getComponent(0);
         resizeableComponent = (JComponent) jViewport.getView();
@@ -75,5 +75,8 @@ public class ResizeableTextArea extends ResizeableComponent {
     }
     public String getText() {
         return textArea.getText();
+    }
+    public void setText(String text) {
+        textArea.setText(text);
     }
 }

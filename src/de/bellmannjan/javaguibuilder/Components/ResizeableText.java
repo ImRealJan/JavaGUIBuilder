@@ -9,8 +9,8 @@ public class ResizeableText extends ResizeableComponent {
 
     private JLabel label = (JLabel)resizeableComponent;
 
-    public ResizeableText(JComponent comp, String name) {
-        super(comp, name);
+    public ResizeableText(JComponent comp, String name, int id) {
+        super(comp, name, id);
         init();
     }
 
@@ -59,5 +59,8 @@ public class ResizeableText extends ResizeableComponent {
     }
     public String getText() {
         return label.getText();
+    }
+    public void setText(String text) {
+        label.setText(text);
     }
 }

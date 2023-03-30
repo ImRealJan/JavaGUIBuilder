@@ -144,7 +144,8 @@ public class MySQL {
                 ArrayList<String> zeile = new ArrayList<>();
                 for(int i = 1; i <= getColumnCount(); i++)
                 {
-                    zeile.add(rs.getObject(i).toString());
+                    if(rs.getObject(i) != null)
+                        zeile.add(rs.getObject(i).toString());
                 }
                 list.add(zeile);
             }

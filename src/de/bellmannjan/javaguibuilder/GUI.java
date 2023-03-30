@@ -16,7 +16,9 @@ import java.util.Objects;
 
 public class GUI extends JFrame {
 
-  private static Session session;
+  private static Project project;
+  private static User user;
+  private static MySQL mySQL;
 
   private static GUIMenu guiMenu;
   private static JDesktopPane guiDeskPane;
@@ -24,9 +26,6 @@ public class GUI extends JFrame {
   private static CodeOutputPanel codeOutputPanel;
   private static ComponentPanel componentPanel;
   private static JTabbedPane tabbedPane;
-  private static MySQL mySQL;
-
-  private static User user;
 
   public static GUIMenu getGuiMenu() {
     return guiMenu;
@@ -46,11 +45,11 @@ public class GUI extends JFrame {
   public static JTabbedPane getTabbedPane() {
     return tabbedPane;
   }
-  public static Session getSession() {
-    return session;
+  public static Project getProject() {
+    return project;
   }
-  public static void setSession(Session session) {
-    GUI.session = session;
+  public static void setProject(Project project) {
+    GUI.project = project;
   }
   public JFrame getInstance() {
     return this;
@@ -82,8 +81,8 @@ public class GUI extends JFrame {
         public boolean dispatchKeyEvent(KeyEvent e) {
           if (e.getID() == KeyEvent.KEY_PRESSED) {
             if(e.getKeyCode() == 127) {
-              if(getSession().getSelectedComponent() != null)
-                getSession().removeResizableComponent(getSession().getSelectedComponent());
+              if(getProject().getSelectedComponent() != null)
+                getProject().removeResizableComponent(getProject().getSelectedComponent());
             }
           }
           return false;
@@ -124,8 +123,8 @@ public class GUI extends JFrame {
       JButton runButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/run.gif"))));
       runButton.setToolTipText("GUI starten");
       runButton.addActionListener(e -> {
-        if(getSession() != null) {
-          getSession().runTestFrame(getInstance());
+        if(getProject() != null) {
+          getProject().runTestFrame(getInstance());
         }
       });
       runButton.setMargin(new Insets(0,0,0,0));
@@ -133,15 +132,8 @@ public class GUI extends JFrame {
       JButton outputButton = new JButton(new ImageIcon(Objects.requireNonNull(getClass().getResource("images/generate.gif"))));
       outputButton.setToolTipText("Code generieren");
       outputButton.addActionListener(e -> {
-        if(getSession() != null) {
-          String output = JOptionPane.showInputDialog(null,"Klassenname eingeben:", getSession().getClassName());
-          if (output == null) return;
-          if(output.equals("") || output.contains(" ")) {
-            JOptionPane.showMessageDialog(null, "Klassenname ist ungültig!");
-          }else {
-            getSession().setClassName(output);
-            new JavaCodeGenerator().generateCode();
-          }
+        if(getProject() != null) {
+          new JavaCodeGenerator().generateCode();
         }
       });
       outputButton.setMargin(new Insets(0,0,0,0));
@@ -191,9 +183,15 @@ public class GUI extends JFrame {
       addWindowListener(new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {
-          if(getSession() != null) {
-            JOptionPane.showMessageDialog(null, "MOMENT!");
-            //TODO speicherabfrage
+          if(getProject() != null) {
+            int answer = JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!\nJetzt speichern?", "", JOptionPane.YES_NO_CANCEL_OPTION);
+            if(answer == JOptionPane.YES_OPTION) {
+              GUI.getProject().saveProject();
+            }
+            if(answer == JOptionPane.CANCEL_OPTION)
+              return;
+            getProject().closeSession();
+            setProject(null);
           }
         }
       });
@@ -202,9 +200,12 @@ public class GUI extends JFrame {
       setVisible(true);
 
       mySQL = new MySQL("javaguibuilder");
-      mySQL.connect();
-
-      new LoginFrame(this, true);
+      if(mySQL.connect()) {
+        new LoginFrame(this, true);
+      }else {
+        JOptionPane.showMessageDialog(null, "Datenbankverbindung konnte nicht eingerichtet werden!");
+        this.dispose();
+      }
     });
   }
 

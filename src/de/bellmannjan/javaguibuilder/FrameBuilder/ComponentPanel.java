@@ -52,8 +52,8 @@ public class ComponentPanel extends JPanel {
             if(component instanceof JButton button) {
                 button.setMargin(new Insets(0,0,0,0));
                 button.addActionListener(e -> {
-                    if(GUI.getSession() != null)
-                        GUI.getSession().createResizableComponent(button.getToolTipText());
+                    if(GUI.getProject() != null)
+                        GUI.getProject().createResizableComponent(button.getToolTipText(), 0);
                 });
             }
         }
@@ -70,7 +70,7 @@ public class ComponentPanel extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(componentList.getSelectedIndex() != -1) {
-                    GUI.getSession().setSelectedComponent(GUI.getSession().getResizableComponents().get(componentList.getSelectedIndex()));
+                    GUI.getProject().setSelectedComponent(GUI.getProject().getResizableComponents().get(componentList.getSelectedIndex()));
                 }
             }
         });
@@ -80,25 +80,25 @@ public class ComponentPanel extends JPanel {
         JPanel listButtons = new JPanel();
         JButton componentBackButton = new JButton("<<");
         componentBackButton.addActionListener(e -> {
-            if(GUI.getSession() != null && GUI.getSession().getResizableComponents().size() != 0) {
-                if(GUI.getSession().getSelectedComponent() != null) {
+            if(GUI.getProject() != null && GUI.getProject().getResizableComponents().size() != 0) {
+                if(GUI.getProject().getSelectedComponent() != null) {
                     if(componentList.getSelectedIndex()-1 >= 0) {
-                       GUI.getSession().setSelectedComponent(GUI.getSession().getResizableComponents().get(componentList.getSelectedIndex()-1));
+                       GUI.getProject().setSelectedComponent(GUI.getProject().getResizableComponents().get(componentList.getSelectedIndex()-1));
                    }
                 }else {
-                    GUI.getSession().setSelectedComponent(GUI.getSession().getResizableComponents().get(0));
+                    GUI.getProject().setSelectedComponent(GUI.getProject().getResizableComponents().get(0));
                 }
             }
         });
         JButton componentNextButton = new JButton(">>");
         componentNextButton.addActionListener(e -> {
-            if(GUI.getSession() != null && GUI.getSession().getResizableComponents().size() != 0) {
-                if(GUI.getSession().getSelectedComponent() != null) {
+            if(GUI.getProject() != null && GUI.getProject().getResizableComponents().size() != 0) {
+                if(GUI.getProject().getSelectedComponent() != null) {
                     if (componentList.getSelectedIndex()+1 <= componentListModel.size()-1) {
-                        GUI.getSession().setSelectedComponent(GUI.getSession().getResizableComponents().get(componentList.getSelectedIndex()+1));
+                        GUI.getProject().setSelectedComponent(GUI.getProject().getResizableComponents().get(componentList.getSelectedIndex()+1));
                     }
                 }else {
-                    GUI.getSession().setSelectedComponent(GUI.getSession().getResizableComponents().get(componentListModel.size()-1));
+                    GUI.getProject().setSelectedComponent(GUI.getProject().getResizableComponents().get(componentListModel.size()-1));
                 }
             }
         });
@@ -106,9 +106,9 @@ public class ComponentPanel extends JPanel {
         listButtons.add(componentNextButton);
         JButton componentDeleteButton = new JButton("Löschen");
         componentDeleteButton.addActionListener(e -> {
-            if(GUI.getSession() != null) {
-                if(GUI.getSession().getSelectedComponent() != null) {
-                    GUI.getSession().removeResizableComponent(GUI.getSession().getSelectedComponent());
+            if(GUI.getProject() != null) {
+                if(GUI.getProject().getSelectedComponent() != null) {
+                    GUI.getProject().removeResizableComponent(GUI.getProject().getSelectedComponent());
                 }
             }
         });
@@ -128,8 +128,8 @@ public class ComponentPanel extends JPanel {
      */
     public void updateList() {
         componentListModel.clear();
-        GUI.getSession().getResizableComponents().forEach(resizableComponent1 -> GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent1.getName() + " : "
+        GUI.getProject().getResizableComponents().forEach(resizableComponent1 -> GUI.getComponentPanel().getComponentListModel().addElement(resizableComponent1.getName() + " : "
                 + resizableComponent1.getComponentType().toUpperCase()));
-        GUI.getComponentPanel().getComponentList().setSelectedIndex(GUI.getSession().getResizableComponents().size()-1);
+        GUI.getComponentPanel().getComponentList().setSelectedIndex(GUI.getProject().getResizableComponents().size()-1);
     }
 }

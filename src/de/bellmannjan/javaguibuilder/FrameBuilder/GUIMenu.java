@@ -1,12 +1,12 @@
 package de.bellmannjan.javaguibuilder.FrameBuilder;
 
-import de.bellmannjan.javaguibuilder.AccountFrame;
-import de.bellmannjan.javaguibuilder.GUI;
-import de.bellmannjan.javaguibuilder.LoginFrame;
-import de.bellmannjan.javaguibuilder.Session;
+import de.bellmannjan.javaguibuilder.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.sql.SQLException;
 
 public class GUIMenu extends JMenuBar {
 
@@ -33,7 +33,21 @@ public class GUIMenu extends JMenuBar {
 
         JMenu hilfeMenu = new JMenu("Hilfe");
         JMenuItem openHelpMenuItem = new JMenuItem("Programmhilfe");
+        openHelpMenuItem.addActionListener(e -> {
+            try {
+                java.awt.Desktop.getDesktop().browse(URI.create("https://docs.oracle.com/en/java/javase/19/docs/api/index.html"));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         JMenuItem openJavaHelpMenuItem = new JMenuItem("Javahilfe");
+        openJavaHelpMenuItem.addActionListener(e -> {
+            try {
+                java.awt.Desktop.getDesktop().browse(URI.create("https://docs.oracle.com/en/java/javase/19/docs/api/index.html"));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         JMenu accountMenu = new JMenu("Konto");
         accountName = new JMenuItem();
@@ -44,11 +58,11 @@ public class GUIMenu extends JMenuBar {
         });
         JMenuItem logoutMenuItem = new JMenuItem("Abmelden");
         logoutMenuItem.addActionListener(e -> {
-            if(GUI.getSession() != null) {
-                GUI.getSession().closeSession();
-                GUI.setSession(null);
+            if(GUI.getProject() != null) {
+                handleSaveOption();
             }
             GUI.setUser(null);
+            GUI.getGuiMenu().getAccountName().setText("");
             new LoginFrame((JFrame) SwingUtilities.getRoot(this), true);
         });
 
@@ -71,71 +85,66 @@ public class GUIMenu extends JMenuBar {
     }
 
     private void click_openMenuItem(ActionEvent e) {
-        /**try {
-         openChooser.removeChoosableFileFilter(openChooser.getAcceptAllFileFilter());
-         FileFilter filter = new FileFilter(){
-         public boolean accept(File f){
-         if(f.isDirectory()) return true;
-         else return f.getName().endsWith(".jfrm");
-         }
-         public String getDescription(){
-         return "Java GUI Builder";
-         }
-         };
-         openChooser.setFileFilter(filter);
-         if (openChooser.showOpenDialog(openChooser) == JFileChooser.APPROVE_OPTION) {
-         File file = openChooser.getSelectedFile();
-         }
-         }catch (Exception ex) {
-         ex.printStackTrace();
-         }*/
+        if(GUI.getProject() != null) {
+            handleSaveOption();
+        }
+        if(GUI.getMySQL().isConnected()) {
+            new ProjectListFrame((JFrame) SwingUtilities.getRoot(this), true);
+        }
     }
 
     private void click_saveMenuItem(ActionEvent e) {
-        /**try {
-         saveChooser.removeChoosableFileFilter(saveChooser.getAcceptAllFileFilter());
-         FileFilter filter = new FileFilter(){
-         public boolean accept(File f){
-         if(f.isDirectory()) return true;
-         else return f.getName().endsWith(".jfrm");
-         }
-         public String getDescription(){
-         return "Java GUI Builder";
-         }
-         };
-         saveChooser.setFileFilter(filter);
-         if (saveChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-         File file = saveChooser.getSelectedFile();
-         if (file == null) {
-         return;
-         }
-         if (!file.getName().toLowerCase().endsWith(".jfrm")) {
-         file = new File(file.getParentFile(), file.getName() + ".jfrm");
-         }
-         if (!file.createNewFile()) {
-         JOptionPane.showMessageDialog(saveChooser, "Diese Datei existiert schon!");
-         }
-         }
-         }catch (Exception ex) {
-         ex.printStackTrace();
-         }*/
-    }
-
-    private void click_newMenuItem(ActionEvent e) {
-        if(GUI.getSession() == null) {
-            GUI.setSession(new Session());
-        }else {
-            //TODO speicher abfrage
-            JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!", "", JOptionPane.OK_CANCEL_OPTION);
-        }
-    }
-    public void click_exitMenuItem(ActionEvent e) {
-        if(GUI.getSession() != null) {
-            //ToDO speicher abfrage danach:
-            GUI.getSession().closeSession();
-            GUI.setSession(null);
+        if(GUI.getProject() != null) {
+            GUI.getProject().saveProject();
+            JOptionPane.showMessageDialog(null, "Projekt wurde gespeichert!");
         }else {
             JOptionPane.showMessageDialog(null, "Es ist kein Projekt geöffnet!");
         }
+    }
+
+    private void click_newMenuItem(ActionEvent e) {
+        if(GUI.getProject() != null) {
+            handleSaveOption();
+        }
+            String projectname = JOptionPane.showInputDialog("Gebe einen Projektnamen ein:");
+            if(projectname!= null) {
+                if(projectname.contains(" ")) {
+                    JOptionPane.showMessageDialog(null, "Projektname darf kein Leerzeichen enthalten!");
+                    return;
+                }
+                if(GUI.getMySQL().isConnected()) {
+                    GUI.getMySQL().createSQL("SELECT MAX(`projectid`) FROM `project`;");
+                    try {
+                        if (GUI.getMySQL().getResultSet().next()) {
+                            int id = 1;
+                            if(GUI.getMySQL().getResultSet().getObject(1) != null) {
+                                id = GUI.getMySQL().getResultSet().getInt(1) + 1;
+                            }
+                            GUI.setProject(new Project(id, projectname));
+                        }
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+    }
+    public void click_exitMenuItem(ActionEvent e) {
+        if(GUI.getProject() != null) {
+            handleSaveOption();
+        }else {
+            JOptionPane.showMessageDialog(null, "Es ist kein Projekt geöffnet!");
+        }
+    }
+
+    public void handleSaveOption() {
+        int answer = JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!\nJetzt speichern?", "", JOptionPane.YES_NO_CANCEL_OPTION);
+        if(answer == JOptionPane.YES_OPTION) {
+            GUI.getProject().saveProject();
+        }
+        if(answer == JOptionPane.CANCEL_OPTION)
+            return;
+        GUI.getProject().closeSession();
+        GUI.setProject(null);
+
     }
 }

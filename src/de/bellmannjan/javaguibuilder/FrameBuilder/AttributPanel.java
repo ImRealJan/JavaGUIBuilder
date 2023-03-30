@@ -112,15 +112,15 @@ public class AttributPanel extends JPanel {
      * Wird ausgeführt wenn sich der Inhalt einer Komponente in der Rechten Attributspalte ändert. Attribute werden an die ausgewählte ResizeableComponent übergeben und die Komponentenauswahl geupdatet.
      */
     private void componentUpdater() {
-        if (GUI.getSession() != null) {
-            ResizeableComponent resizeableComponent = GUI.getSession().getSelectedComponent();
+        if (GUI.getProject() != null) {
+            ResizeableComponent resizeableComponent = GUI.getProject().getSelectedComponent();
             if (resizeableComponent != null) {
                 resizeableComponent.updateAttributes();
                 int index = GUI.getComponentPanel().getComponentList().getSelectedIndex();
                 GUI.getComponentPanel().updateList();
                 GUI.getComponentPanel().getComponentList().setSelectedIndex(index);
             } else {
-                GUI.getSession().getCustomFrame().updateAttributes();
+                GUI.getProject().getCustomFrame().updateAttributes();
             }
         }
     }

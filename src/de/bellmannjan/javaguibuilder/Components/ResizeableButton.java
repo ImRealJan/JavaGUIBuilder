@@ -10,8 +10,8 @@ public class ResizeableButton extends ResizeableComponent {
     private JButton button = (JButton) resizeableComponent;
 
     private boolean actionPerformed = false;
-    public ResizeableButton(JComponent comp, String name) {
-        super(comp, name);
+    public ResizeableButton(JComponent comp, String name, int id) {
+        super(comp, name, id);
         init();
     }
     /**
@@ -69,7 +69,15 @@ public class ResizeableButton extends ResizeableComponent {
         return button.getText();
     }
 
+    public void setText(String text) {
+        button.setText(text);
+    }
+
     public boolean hasEvent() {
         return actionPerformed;
+    }
+
+    public void setActionPerformed(boolean actionPerformed) {
+        this.actionPerformed = actionPerformed;
     }
 }

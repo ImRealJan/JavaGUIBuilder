@@ -22,7 +22,7 @@ public class CustomFrame extends JInternalFrame {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
-                GUI.getSession().setSelectedComponent(null);
+                GUI.getProject().setSelectedComponent(null);
             }
         });
 

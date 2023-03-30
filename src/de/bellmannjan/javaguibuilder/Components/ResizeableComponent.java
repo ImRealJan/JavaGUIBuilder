@@ -17,6 +17,8 @@ public abstract class ResizeableComponent extends JComponent {
     private final String componentType;
     protected JComponent resizeableComponent;
 
+    private int componentid;
+
     private int cursor;
     private  Point startpoint;
     private Point startPos;
@@ -25,13 +27,21 @@ public abstract class ResizeableComponent extends JComponent {
      * @param comp Komponente die Veränderbar werden soll
      * @param name Attributname für die Komponente
      */
-    public ResizeableComponent(JComponent comp, String name) {
+    public ResizeableComponent(JComponent comp, String name, int id) {
         setLayout(new BorderLayout());
         add(comp);
-        setName("j" + name + GUI.getSession().componentCounter);
+
         componentType = "J" + name;
+        componentid = id;
 
         resizeableComponent = comp;
+
+        int counter = 1;
+        for (ResizeableComponent resizeableComponent1 : GUI.getProject().getResizableComponents()) {
+            if(resizeableComponent1 == resizeableComponent) return;
+            if(resizeableComponent1.getName().equals("j" + name + counter)) counter++;
+        }
+        setName("j" + name + counter);
     }
 
     /**
@@ -39,7 +49,7 @@ public abstract class ResizeableComponent extends JComponent {
      */
     @Override
     public void setName(String name) {
-        for (ResizeableComponent resizeableComponent : GUI.getSession().getResizableComponents()) {
+        for (ResizeableComponent resizeableComponent : GUI.getProject().getResizableComponents()) {
             if (resizeableComponent.getName().equals(name)) {
                 return;
             }
@@ -74,11 +84,20 @@ public abstract class ResizeableComponent extends JComponent {
      */
     public abstract String getText();
 
+    public abstract void setText(String text);
+
     /**
      * @return Den Typ der Komponente
      */
     public String getComponentType() {
         return componentType;
+    }
+
+    /**
+     * @return Die ID der Komponente
+     */
+    public int getComponentID() {
+        return componentid;
     }
 
     /**
@@ -96,7 +115,7 @@ public abstract class ResizeableComponent extends JComponent {
                 startPos = e.getPoint();
                 startpoint = SwingUtilities.convertPoint(getComponent(), e.getPoint(), getParent());
 
-                GUI.getSession().setSelectedComponent((ResizeableComponent)getComponent());
+                GUI.getProject().setSelectedComponent((ResizeableComponent)getComponent());
             }
 
             /**
@@ -164,7 +183,7 @@ public abstract class ResizeableComponent extends JComponent {
              */
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (GUI.getSession().getSelectedComponent() == getComponent()) {
+                if (GUI.getProject().getSelectedComponent() == getComponent()) {
 
                     ResizeableBorder resizeableBorder = (ResizeableBorder) resizeableComponent.getBorder();
                     resizeableComponent.setCursor(Cursor.getPredefinedCursor(resizeableBorder.getCursor(e)));

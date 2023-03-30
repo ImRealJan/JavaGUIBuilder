@@ -58,8 +58,8 @@ public class ResizeableBorder implements Border {
     public void paintBorder(Component component, Graphics g, int x, int y,
                             int w, int h) {
 
-        if(GUI.getSession() != null) {
-            if (GUI.getSession().getSelectedComponent() == resizeableComponent) {
+        if(GUI.getProject() != null) {
+            if (GUI.getProject().getSelectedComponent() == resizeableComponent) {
 
                 g.setColor(Color.black);
                 g.drawRect(x / 2, y / 2, w - 1, h - 1);

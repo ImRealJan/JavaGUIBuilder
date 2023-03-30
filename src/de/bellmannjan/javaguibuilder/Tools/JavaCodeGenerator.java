@@ -55,10 +55,10 @@ public class JavaCodeGenerator {
     public void generateCode() {
 
         methods += "  "+ asConstructor("public static void") + " main(" + asObject("String") + "[] args) {\n" +
-                   "    " + asConstructor("new") + " " + GUI.getSession().getClassName() + "();\n" +
+                   "    " + asConstructor("new") + " " + GUI.getProject().getClassName() + "();\n" +
                    "  }\n\n";
 
-        GUI.getSession().getResizableComponents().forEach(resizeableComponent -> {
+        GUI.getProject().getResizableComponents().forEach(resizeableComponent -> {
             //Hinzufügen der Attribute für jede Komponente
             attribute += "  " + asConstructor("private") + " "
                 + asObject(resizeableComponent.getComponentType()) + " " + resizeableComponent.getName() + " = "
@@ -120,18 +120,17 @@ public class JavaCodeGenerator {
                 " * Beschreibung\n" +
                 " *\n" +
                 " * @version 1.0 vom " + dtf.format(now) +"\n" +
-                " * @author\n" +
+                " * @author " + GUI.getUser().getUsername() + "\n" +
                 " */\n\n");
-        code += asConstructor("public class ") + GUI.getSession().getClassName() + " " + asConstructor("extends") + " JFrame {\n\n";
+        code += asConstructor("public class ") + GUI.getProject().getClassName() + " " + asConstructor("extends") + " JFrame {\n\n";
         code += attribute;
-        code += "\n\n  " + asConstructor("public") + " " + GUI.getSession().getClassName() + "() {\n" +
+        code += "\n\n  " + asConstructor("public") + " " + GUI.getProject().getClassName() + "() {\n" +
                 "    " + asConstructor("super") + "();\n" +
                 "    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);\n" +
-                "    setSize(" + asString((GUI.getSession().getCustomFrame().getWidth()+5) + "") + ", " + asString((GUI.getSession().getCustomFrame().getHeight()+5) + "") +");\n" +
-                "    setLocation(" + asString(GUI.getSession().getCustomFrame().getX()+"") + ", " + asString(GUI.getSession().getCustomFrame().getY()+"") + ");\n" +
+                "    setSize(" + asString((GUI.getProject().getCustomFrame().getWidth()+5) + "") + ", " + asString((GUI.getProject().getCustomFrame().getHeight()+5) + "") +");\n" +
                 "    setLocationRelativeTo("+ asConstructor("null") +");\n" +
-                "    setTitle(" + asString("\"" + GUI.getSession().getCustomFrame().getTitle() + "\"") + ");\n" +
-                "    setResizable(" + asConstructor(GUI.getSession().getCustomFrame().isResizable()+"") + ");\n" +
+                "    setTitle(" + asString("\"" + GUI.getProject().getCustomFrame().getTitle() + "\"") + ");\n" +
+                "    setResizable(" + asConstructor(GUI.getProject().getCustomFrame().isResizable()+"") + ");\n" +
                 "    Container cp = getContentPane();\n" +
                 "    cp.setLayout(" + asConstructor("null") + ");\n\n";
         code += components;
