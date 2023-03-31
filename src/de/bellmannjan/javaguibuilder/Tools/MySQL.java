@@ -113,23 +113,6 @@ public class MySQL {
 
     }
 
-    public int getRowCount()
-    {
-        int row = 0;
-        try
-        {
-            while(rs.next())
-            {
-                row++;
-            }
-            return row;
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
     public ResultSet getResultSet() {
         return rs;
     }

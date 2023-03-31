@@ -16,9 +16,6 @@ public class GUIMenu extends JMenuBar {
         return accountName;
     }
 
-    private JFileChooser openChooser = new JFileChooser();
-    private JFileChooser saveChooser = new JFileChooser();
-
     public GUIMenu() {
 
         JMenu dateiMenu = new JMenu("Datei");

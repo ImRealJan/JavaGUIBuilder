@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 
 public class JavaCodeGenerator {
 
-    String attribute = "";
-    String components = "";
-    String methods = "";
-    String code = "";
+    private String attribute = "";
+    private String components = "";
+    private String methods = "";
+    private String code = "";
 
     private String asDescription(String description) {
         return "<span style='color:#800'>" + description+ "</span>";

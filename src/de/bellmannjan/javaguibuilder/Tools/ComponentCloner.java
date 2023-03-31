@@ -9,8 +9,8 @@ import java.awt.*;
 
 public class ComponentCloner {
 
-    ResizeableComponent component;
-    JComponent clonedComponent;
+    private ResizeableComponent component;
+    private JComponent clonedComponent;
 
     /**
      * @param component Übergabe der Komponente die geklont werden soll. Und den Komponenten-Typ zuordnen
