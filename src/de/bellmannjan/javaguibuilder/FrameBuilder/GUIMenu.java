@@ -81,6 +81,9 @@ public class GUIMenu extends JMenuBar {
         accountMenu.add(logoutMenuItem);
     }
 
+    /**
+     * @param e Öffnen des Projektauswahlfenster
+     */
     private void click_openMenuItem(ActionEvent e) {
         boolean isCanceled= false;
         if(GUI.getProject() != null) {
@@ -92,6 +95,9 @@ public class GUIMenu extends JMenuBar {
         }
     }
 
+    /**
+     * @param e Wenn Projekt geöffnet dann Speichern
+     */
     private void click_saveMenuItem(ActionEvent e) {
         if(GUI.getProject() != null) {
             GUI.getProject().saveProject();
@@ -101,6 +107,9 @@ public class GUIMenu extends JMenuBar {
         }
     }
 
+    /**
+     * @param e Hinzufügen eines neuen Projekts wenn keins existiert, aufforderung der Projektnamen holen einer ProjectID aus der Datenbank
+     */
     private void click_newMenuItem(ActionEvent e) {
         boolean isCanceled= false;
         if(GUI.getProject() != null) {
@@ -130,6 +139,10 @@ public class GUIMenu extends JMenuBar {
             }
         }
     }
+
+    /**
+     * @param e Überprüfen ob Projekt geöffnet, wenn dann Speicherabfrage
+     */
     public void click_exitMenuItem(ActionEvent e) {
         if(GUI.getProject() != null) {
             handleSaveOption();
@@ -138,6 +151,9 @@ public class GUIMenu extends JMenuBar {
         }
     }
 
+    /**
+     * @return Überprüft welcher Button gedrückt wurde und führt dementsprechend Befehl aus, z.B. Projekt speichern
+     */
     public boolean handleSaveOption() {
         int answer = JOptionPane.showConfirmDialog(null, "Das Projekt wurde noch nicht gespeichert!\nJetzt speichern?", "", JOptionPane.YES_NO_CANCEL_OPTION);
         if(answer == JOptionPane.YES_OPTION) {
